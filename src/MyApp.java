@@ -1,47 +1,56 @@
+import Controller.DBConnector;
+import Controller.ItemController;
+import Model.Item;
+
+import java.sql.Connection;
 import java.util.*;
 
 public class MyApp {
-    
-    //Menu strings
     private final String menuString = """
-        Welcome to MyApp! Please select an option from the menu below.
-        1. Update Database
-        2. Query Options
-        3. View Reports
+            Welcome to MyApp! Please select an option from the menu below.
+            1. Update Database
+            2. Query Options
+            3. View Reports
 
-        (Enter 0 to exit):
-        """;
+            (Enter 0 to exit):
+            """;
     private final String op1MenuString = """
-        Update Database Menu:
-        1. Create New Entry
-        2. Update Existing Entry
-        3. Delete Entry
+            Update Database Menu:
+            1. Create New Entry
+            2. Update Existing Entry
+            3. Delete Entry
 
-        (Enter 0 to return to main menu):
-        """;
+            (Enter 0 to return to main menu):
+            """;
 
     private int userMenuInput;
 
     public int getUserMenuInput() {
         return userMenuInput;
     }
+
     public void setUserMenuInput(int userMenuInput) {
         this.userMenuInput = userMenuInput;
     }
-    
+
     public static void main(String[] args) {
         System.out.println("Running MyApp...");
         MyApp app = new MyApp();
         Scanner scanner = new Scanner(System.in);
-        app.setUserMenuInput(-1); // Initialize to an invalid option
-        
+        app.setUserMenuInput(-1);
+
+        // Initialize DB connection and controller
+        DBConnector db = new DBConnector();
+        Connection conn = db.getConnection();
+        ItemController itemController = new ItemController(conn);
+
         do {
             System.out.println("-----------------------------------");
             System.out.print(app.menuString);
 
             while (!scanner.hasNextInt()) {
                 System.out.println("Invalid input. Please enter a number.");
-                scanner.next(); // Clear the invalid input
+                scanner.next();
             }
 
             app.setUserMenuInput(scanner.nextInt());
@@ -50,17 +59,18 @@ public class MyApp {
                 case 1:
                     System.out.println("Option 1 selected.");
                     if (app.correctPassword("dummyPassword")) {
-                        app.updateDatabaseMenu(scanner);
-                    }
-                    else {
+                        app.updateDatabaseMenu(scanner, itemController);
+                    } else {
                         System.out.println("Incorrect password. Returning to main menu.");
                     }
                     break;
                 case 2:
                     System.out.println("Option 2 selected.");
+                    app.queryOptionsMenu(scanner, itemController);
                     break;
                 case 3:
                     System.out.println("Option 3 selected.");
+                    // TODO: Add reports
                     break;
                 case 0:
                     System.out.println("Exit Option Selected.");
@@ -77,38 +87,137 @@ public class MyApp {
     }
 
     public boolean correctPassword(String password) {
-        //TODO: Password validation logic
-        return true;
+        return true; // TODO: add actual password logic
     }
-    //menus
-    private void updateDatabaseMenu(Scanner scanner) {
-        System.out.println(op1MenuString);
+
+    // Update Menu (uses ItemController)
+    public void updateDatabaseMenu(Scanner scanner, ItemController itemController) {
         int op1MenuInput = -1;
 
         while (op1MenuInput != 0) {
+            System.out.print(op1MenuString);
+
             while (!scanner.hasNextInt()) {
                 System.out.println("Invalid input. Please enter a number.");
-                scanner.next(); // Clear the invalid input
+                scanner.next();
             }
+
             op1MenuInput = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
 
             switch (op1MenuInput) {
-                case 1:
-                    System.out.println("Creating new entry...");
-                    break;
-                case 2:
-                    System.out.println("Updating existing entry...");
-                    break;
-                case 3:
-                    System.out.println("Deleting entry...");
-                    break;
-                case 0:
-                    System.out.println("Returning to main menu.");
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-                    break;
+                case 1 -> {
+                    // Create Item
+                    System.out.print("Enter item name: ");
+                    String name = scanner.nextLine();
+
+                    System.out.print("Enter price: ");
+                    double price = scanner.nextDouble();
+
+                    System.out.print("Enter quantity: ");
+                    int quantity = scanner.nextInt();
+                    scanner.nextLine(); // clear newline
+
+                    int itemID = new Random().nextInt(100000);
+                    Item item = new Item();
+                    item.setItemID(itemID);
+                    item.setItemName(name);
+                    item.setPrice(price);
+                    item.setQuantity(quantity);
+
+                    itemController.addItem(item);
+                    System.out.println("Item added.");
+                }
+                case 2 -> {
+                    // Update Item
+                    System.out.print("Enter item ID to update: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Item item = itemController.getItemByID(id);
+                    if (item == null) {
+                        System.out.println("Item not found.");
+                        break;
+                    }
+
+                    System.out.print("Enter new name (blank to keep): ");
+                    String newName = scanner.nextLine();
+                    if (!newName.isBlank())
+                        item.setItemName(newName);
+
+                    System.out.print("Enter new price (-1 to keep): ");
+                    double newPrice = scanner.nextDouble();
+                    if (newPrice >= 0)
+                        item.setPrice(newPrice);
+
+                    System.out.print("Enter new quantity (-1 to keep): ");
+                    int newQty = scanner.nextInt();
+                    if (newQty >= 0)
+                        item.setQuantity(newQty);
+
+                    itemController.updateItem(item);
+                    System.out.println("Item updated.");
+                    scanner.nextLine();
+                }
+                case 3 -> {
+                    // Delete Item
+                    System.out.print("Enter item ID to delete: ");
+                    int id = scanner.nextInt();
+                    itemController.deleteItem(id);
+                    System.out.println("Item deleted.");
+                    scanner.nextLine();
+                }
+
+                case 0 -> System.out.println("Returning to main menu.");
+                default -> System.out.println("Invalid option. Please try again.");
             }
         }
     }
+
+    private void queryOptionsMenu(Scanner scanner, ItemController itemController) {
+        String queryMenu = """
+                Query Options Menu:
+                1. View All Items
+
+                (Enter 0 to return to main menu):
+                """;
+
+        int input = -1;
+        while (input != 0) {
+            System.out.println(queryMenu);
+            System.out.print("Enter option: ");
+
+            while (!scanner.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next();
+            }
+
+            input = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (input) {
+                case 1 -> {
+                    List<Item> items = itemController.getAllItems();
+                    if (items.isEmpty()) {
+                        System.out.println("No items found.");
+                    } else {
+                        System.out.println("All Items in Inventory:");
+                        for (Item item : items) {
+                            System.out.println("-----------------------------");
+                            System.out.println("ID: " + item.getItemID());
+                            System.out.println("Name: " + item.getItemName());
+                            System.out.println("Price: " + item.getPrice());
+                            System.out.println("Quantity: " + item.getQuantity());
+                        }
+                        System.out.println("-----------------------------");
+                    }
+                }
+
+                case 0 -> System.out.println("Returning to main menu.");
+
+                default -> System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
 }
