@@ -2,6 +2,8 @@ package Controller;
 
 import Model.Item;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemController {
     private Connection conn;
@@ -10,9 +12,9 @@ public class ItemController {
         this.conn = conn;
     }
 
-    //Create
+    // Create
     public void addItem(Item item) {
-        String sql = "INSERT INTO items (itemID, itemName, price, quantity) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO items (itemID, item_name, price, quantity) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -28,7 +30,7 @@ public class ItemController {
         }
     }
 
-    //Read
+    // Read
     public Item getItemByID(int itemID) {
         String sql = "SELECT * FROM items WHERE itemID = ?";
         Item item = null;
@@ -39,10 +41,10 @@ public class ItemController {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                
+
                 item = new Item();
                 item.setItemID(rs.getInt("itemID"));
-                item.setItemName(rs.getString("itemName"));
+                item.setItemName(rs.getString("item_name"));
                 item.setPrice(rs.getDouble("price"));
                 item.setQuantity(rs.getInt("quantity"));
             }
@@ -53,9 +55,9 @@ public class ItemController {
         return item;
     }
 
-    //Update
+    // Update
     public void updateItem(Item item) {
-        String sql = "UPDATE items SET itemName = ?, price = ?, quantity = ? WHERE itemID = ?";
+        String sql = "UPDATE items SET item_name = ?, price = ?, quantity = ? WHERE itemID = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -70,16 +72,41 @@ public class ItemController {
         }
     }
 
-    //Delete
+    // Delete
     public void deleteItem(int itemID) {
         String sql = "DELETE FROM items WHERE itemID = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+
             pstmt.setInt(1, itemID);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    // Read all items
+    public List<Item> getAllItems() {
+        List<Item> items = new ArrayList<>();
+        String sql = "SELECT * FROM items";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Item item = new Item();
+                item.setItemID(rs.getInt("itemID"));
+                item.setItemName(rs.getString("item_Name"));
+                item.setPrice(rs.getDouble("price"));
+                item.setQuantity(rs.getInt("quantity"));
+                items.add(item);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return items;
+    }
+
 }
