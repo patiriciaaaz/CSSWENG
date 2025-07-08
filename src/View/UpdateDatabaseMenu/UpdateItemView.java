@@ -8,99 +8,129 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-public class UpdateItemView extends JFrame {
+public class UpdateItemView extends JDialog {
     private final JTextField nameField = new JTextField();
     private final JTextField priceField = new JTextField();
     private final JTextField quantityField = new JTextField();
     private final JLabel statusLabel = new JLabel("");
-    private final JList<String> itemList = new JList<>();
-    private List<Item> items;
 
     private final ItemController itemController;
+    private final Item item;
 
-    public UpdateItemView(ItemController itemController) {
+    public UpdateItemView(JFrame parent, ItemController itemController, Item item) {
+        super(parent, "Update Item", true);
         this.itemController = itemController;
+        this.item = item;
 
-        setTitle("Update Existing Item");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
-        setLocationRelativeTo(null);
+        setSize(550, 450);
+        setLocationRelativeTo(parent);
 
-        // Main panel with border layout
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        //  Title Bar 
+        JPanel titleBar = new JPanel();
+        titleBar.setBackground(new Color(180, 0, 0));
+        titleBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        titleBar.setPreferredSize(new Dimension(420, 50));
+        JLabel titleLabel = new JLabel("Update Item");
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleBar.setLayout(new BorderLayout());
+        titleBar.add(titleLabel, BorderLayout.CENTER);
 
-        // LEFT PANEL: Item list
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        JLabel listTitle = new JLabel("Select Item:");
-        listTitle.setFont(new Font("SansSerif", Font.BOLD, 14));
-        leftPanel.add(listTitle, BorderLayout.NORTH);
-        refreshItemList();
-        itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scrollPane = new JScrollPane(itemList);
-        scrollPane.setPreferredSize(new Dimension(250, 300));
-        leftPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(leftPanel, BorderLayout.WEST);
-
-        // RIGHT PANEL: Update form
+        // Main Form Panel 
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(Color.WHITE);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
 
-        formPanel.add(new JLabel("New Name (type KEEP to keep):"));
+        Font labelFont = new Font("Segoe UI", Font.BOLD, 15);
+        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 15);
+
+        JLabel nameLabel = new JLabel("Item Name:");
+        nameLabel.setFont(labelFont);
+        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formPanel.add(nameLabel);
+
+        nameField.setFont(fieldFont);
+        nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        nameField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
+        nameField.setText(item.getItemName());
         formPanel.add(nameField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        formPanel.add(new JLabel("New Price (type KEEP to keep):"));
+        JLabel priceLabel = new JLabel("Price:");
+        priceLabel.setFont(labelFont);
+        priceLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formPanel.add(priceLabel);
+
+        priceField.setFont(fieldFont);
+        priceField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        priceField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
+        priceField.setText(String.valueOf(item.getPrice()));
         formPanel.add(priceField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        formPanel.add(new JLabel("New Quantity (type KEEP to keep):"));
+        JLabel qtyLabel = new JLabel("Quantity:");
+        qtyLabel.setFont(labelFont);
+        qtyLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formPanel.add(qtyLabel);
+
+        quantityField.setFont(fieldFont);
+        quantityField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
+        quantityField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
+        quantityField.setText(String.valueOf(item.getQuantity()));
         formPanel.add(quantityField);
-        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        formPanel.add(Box.createRigidArea(new Dimension(0, 18)));
 
         JButton updateButton = new JButton("Update Item");
         JButton backButton = new JButton("Back");
         updateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        updateButton.setBackground(new Color(180, 0, 0));
+        updateButton.setForeground(Color.WHITE);
+        updateButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        updateButton.setFocusPainted(false);
+        updateButton.setBorder(BorderFactory.createEmptyBorder(8, 24, 8, 24));
+
+        backButton.setBackground(new Color(230, 230, 230));
+        backButton.setForeground(new Color(120, 0, 0));
+        backButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        backButton.setFocusPainted(false);
+        backButton.setBorder(BorderFactory.createEmptyBorder(8, 24, 8, 24));
+
         formPanel.add(updateButton);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         formPanel.add(backButton);
-        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        statusLabel.setForeground(new Color(0, 120, 0));
+        statusLabel.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         formPanel.add(statusLabel);
 
-        statusLabel.setForeground(Color.BLUE);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titleBar, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
 
-        add(mainPanel);
+        setContentPane(mainPanel);
 
+        // Action Listeners
         updateButton.addActionListener(this::handleUpdateItem);
-
-        backButton.addActionListener(e -> {
-            UpdateDatabaseView menu = new UpdateDatabaseView(itemController);
-            menu.setVisible(true);
-            dispose();
-        });
-    }
-
-    private void refreshItemList() {
-        items = itemController.getAllItems();
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (Item item : items) {
-            listModel.addElement("[" + item.getItemID() + "] " + item.getItemName() + " - ₱" + item.getPrice() + " - "
-                    + item.getQuantity() + " pcs");
-        }
-        itemList.setModel(listModel);
+        backButton.addActionListener(e -> dispose());
     }
 
     private void handleUpdateItem(ActionEvent e) {
-        int index = itemList.getSelectedIndex();
-        if (index == -1) {
-            statusLabel.setText("Please select an item to update.");
-            return;
-        }
-        Item item = items.get(index);
-
         try {
             String name = nameField.getText().trim();
             if (!name.equalsIgnoreCase("KEEP") && !name.isBlank()) {
@@ -121,8 +151,6 @@ public class UpdateItemView extends JFrame {
 
             itemController.updateItem(item);
             statusLabel.setText("Item updated successfully.");
-            clearFields();
-            refreshItemList();
         } catch (NumberFormatException ex) {
             statusLabel.setText("Invalid input format.");
         }
