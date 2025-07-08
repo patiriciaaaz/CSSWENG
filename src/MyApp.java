@@ -1,6 +1,10 @@
 import Controller.DBConnector;
 import Controller.ItemController;
+import Controller.SaleController;
+import Controller.TransactionController;
 import Model.Item;
+import Model.Sale;
+import Model.Transaction;
 
 import java.sql.Connection;
 import java.util.*;
@@ -11,6 +15,7 @@ public class MyApp {
             1. Update Database
             2. Query Options
             3. View Reports
+            4. Transactions
 
             (Enter 0 to exit):
             """;
@@ -43,6 +48,8 @@ public class MyApp {
         DBConnector db = new DBConnector();
         Connection conn = db.getConnection();
         ItemController itemController = new ItemController(conn);
+        SaleController saleController = new SaleController(conn);
+        TransactionController transactionController = new TransactionController(conn);
 
         do {
             System.out.println("-----------------------------------");
@@ -70,7 +77,9 @@ public class MyApp {
                     break;
                 case 3:
                     System.out.println("Option 3 selected.");
-                    // TODO: Add reports
+                    break;
+                case 4:
+                    app.transactionSaleMenu(scanner, transactionController, saleController, itemController);
                     break;
                 case 0:
                     System.out.println("Exit Option Selected.");
@@ -218,6 +227,81 @@ public class MyApp {
                 default -> System.out.println("Invalid option. Please try again.");
             }
         }
+    }
+
+    public void transactionSaleMenu(Scanner scanner, TransactionController transactionController,
+            SaleController saleController, ItemController itemController) {
+        Random rand = new Random();
+
+        // 1. Create Transaction
+        int transactionID = rand.nextInt(100000);
+        Integer memberID = null;
+
+        scanner.nextLine();
+        System.out.print("Enter member ID (or leave blank if not applicable): ");
+        String memberInput = scanner.nextLine().trim();
+
+        if (!memberInput.isEmpty()) {
+            try {
+                memberID = Integer.parseInt(memberInput);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Proceeding with no member ID.");
+            }
+        }
+
+        System.out.print("Enter transaction type: (membership_purchase,membership_renewal,consumables,merchandise) ");
+        String transactionType = scanner.nextLine();
+
+        double totalAmount = 0.0;
+        List<Sale> salesList = new ArrayList<>();
+
+        // 2. Add Sale Items
+        while (true) {
+            System.out.print("Enter item ID to add to sale (or 0 to finish): ");
+            int itemID = scanner.nextInt();
+            if (itemID == 0)
+                break;
+
+            Item item = itemController.getItemByID(itemID);
+            if (item == null) {
+                System.out.println("Item not found.");
+                continue;
+            }
+
+            System.out.print("Enter quantity: ");
+            int qty = scanner.nextInt();
+            scanner.nextLine();
+
+            Sale sale = new Sale();
+            sale.setSalesID(rand.nextInt(100000));
+            sale.setTransactionID(transactionID);
+            sale.setItemID(itemID);
+            sale.setQuantity(qty);
+
+            salesList.add(sale);
+            totalAmount += item.getPrice() * qty;
+
+            System.out.println("Added: " + item.getItemName() + " x" + qty);
+        }
+
+        scanner.nextLine(); // consume newline
+
+        // 3. Save Transaction
+        Transaction transaction = new Transaction();
+        transaction.setTransactionID(transactionID);
+        transaction.setMemberID(memberID);
+        transaction.setTransactionDate(new java.sql.Date(System.currentTimeMillis()));
+        transaction.setAmount(totalAmount);
+        transaction.setTransactionType(transactionType);
+
+        transactionController.addTransaction(transaction);
+
+        // 4. Save Sales
+        for (Sale s : salesList) {
+            saleController.addSale(s);
+        }
+
+        System.out.println("Transaction and sales saved successfully!");
     }
 
 }

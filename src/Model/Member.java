@@ -3,7 +3,7 @@ package Model;
 import java.time.LocalDate;
 
 public class Member {
-    private int memberID;
+    private Integer memberID;
     private String lastName;
     private String firstName;
     private LocalDate dateOfBirth;
@@ -14,7 +14,7 @@ public class Member {
     private String membershipStatus;
 
     // Getters
-    public int getMemberID() {
+    public Integer getMemberID() {
          return memberID; 
     }
 
@@ -53,7 +53,7 @@ public class Member {
 
 
     // Setters
-    public void setMemberID(int memberID) {
+    public void setMemberID(Integer memberID) {
          this.memberID = memberID; 
     }
     
