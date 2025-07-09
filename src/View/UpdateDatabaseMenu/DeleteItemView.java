@@ -69,8 +69,8 @@ public class DeleteItemView extends JFrame {
         items = itemController.getAllItems();
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (Item item : items) {
-            listModel.addElement("[" + item.getItemID() + "] " + item.getItemName() + " - ₱" + item.getPrice() + " x"
-                    + item.getQuantity());
+            listModel.addElement("[" + item.getItemID() + "] " + item.getItemName() + " - ₱" + item.getPrice() + " - "
+                    + item.getQuantity() + " pcs");
         }
         itemList.setModel(listModel);
     }
