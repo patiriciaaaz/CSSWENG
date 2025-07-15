@@ -6,7 +6,7 @@ import Model.Item;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
+
 
 public class UpdateItemView extends JDialog {
     private final JTextField nameField = new JTextField();

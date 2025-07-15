@@ -4,30 +4,15 @@ import Controller.DBConnector;
 import Controller.ItemController;
 import Controller.SaleController;
 import Controller.TransactionController;
-import Model.Item;
-import Model.Sale;
-import Model.Transaction;
 import View.MainMenu;
-import View.UpdateDatabaseMenu.UpdateDatabaseView;
-
+import View.TransactionsMenu.TransactionsView;
 import java.sql.Connection;
-import java.util.*;
-
-import javax.swing.JOptionPane;
 
 public class MyApp {
 
     public static void main(String[] args) {
-
-        DBConnector db = new DBConnector();
-        Connection conn = db.getConnection();
-        ItemController itemController = new ItemController(conn);
-        SaleController saleController = new SaleController(conn);
-        TransactionController transactionController = new TransactionController(conn);
-
         javax.swing.SwingUtilities.invokeLater(() -> {
             showMainMenu();
-
         });
     }
 
@@ -56,8 +41,10 @@ public class MyApp {
         });
 
         menu.addTransactionsListener(e -> {
-            System.out.println("Transactions selected");
+            new TransactionsView(transactionController, saleController, itemController).setVisible(true);
+            menu.dispose();
         });
+
     }
 
 }
