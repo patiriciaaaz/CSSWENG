@@ -1,7 +1,12 @@
 package Controller;
 
+import Model.Item;
+import Model.Sale;
 import Model.Transaction;
 import java.sql.*;
+import java.util.List;
+
+import javax.swing.JOptionPane;
 
 public class TransactionController {
     private Connection conn;
@@ -11,7 +16,7 @@ public class TransactionController {
     }
 
     // CREATE
-    public void addTransaction(Transaction transaction) {
+    public void addTransaction(Transaction transaction, List<Sale> sales, ItemController itemController) {
         String sql = "INSERT INTO transactions (transactionID, memberID, transaction_date, amount, transaction_type) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
@@ -22,16 +27,33 @@ public class TransactionController {
             } else {
                 stmt.setNull(2, java.sql.Types.INTEGER);
             }
-            stmt.setDate(3, transaction.getTransactionDate()); // java.sql.Date
+            stmt.setDate(3, transaction.getTransactionDate());
             stmt.setDouble(4, transaction.getAmount());
             stmt.setString(5, transaction.getTransactionType());
-
             stmt.executeUpdate();
-        } catch (SQLException e) {
+
+            for (Sale sale : sales) {
+                int itemID = sale.getItemID();
+                int quantitySold = sale.getQuantity();
+
+                Item item = itemController.getItemByID(itemID);
+                if (item != null) {
+                    int updatedQuantity = item.getQuantity() - quantitySold;
+
+                    if (updatedQuantity < 0) {
+                        throw new IllegalStateException("Insufficient stock for item: " + item.getItemName());
+                    }
+
+                    item.setQuantity(updatedQuantity);
+                    itemController.updateItem(item);
+                }
+            }
+
+        } catch (SQLException | IllegalStateException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error saving transaction: " + e.getMessage());
         }
     }
-
 
     // READ
     public Transaction getTransactionByID(int transactionID) {
@@ -86,4 +108,37 @@ public class TransactionController {
             e.printStackTrace();
         }
     }
+
+    // LIST ALL TRANSACTIONS
+    public java.util.List<Transaction> getAllTransactions() {
+        java.util.List<Transaction> transactions = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM transactions ORDER BY transaction_date DESC";
+
+        try (Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Transaction transaction = new Transaction();
+                transaction.setTransactionID(rs.getInt("transactionID"));
+
+                int memberID = rs.getInt("memberID");
+                if (rs.wasNull()) {
+                    transaction.setMemberID(null);
+                } else {
+                    transaction.setMemberID(memberID);
+                }
+
+                transaction.setTransactionDate(rs.getDate("transaction_date"));
+                transaction.setAmount(rs.getDouble("amount"));
+                transaction.setTransactionType(rs.getString("transaction_type"));
+                transactions.add(transaction);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return transactions;
+    }
+
 }

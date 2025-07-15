@@ -14,14 +14,14 @@ public class MainMenu extends JFrame {
         setTitle("SJ Fitness Gym POS");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
 
         // Main Layout
         setLayout(new BorderLayout());
 
         // Side menu panel (red)
         JPanel menuPanel = new JPanel();
-        menuPanel.setBackground(new Color(176,20,20)); 
+        menuPanel.setBackground(new Color(176, 20, 20));
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
         menuPanel.setPreferredSize(new Dimension(250, 0));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
@@ -34,7 +34,7 @@ public class MainMenu extends JFrame {
             menuPanel.add(logoLabel);
             menuPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         } catch (Exception ex) {
-           
+
         }
 
         // Title/logo at the top of the menu
@@ -55,12 +55,12 @@ public class MainMenu extends JFrame {
         JButton[] buttons = { updateDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(250, 40)); 
+            btn.setMaximumSize(new Dimension(250, 40));
             btn.setBackground(Color.RED);
             btn.setForeground(new Color(0, 0, 0));
             btn.setFocusPainted(false);
-            btn.setFont(new Font("Segoe UI", Font.BOLD, 15)); 
-            btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+            btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             btn.setOpaque(true);
 
