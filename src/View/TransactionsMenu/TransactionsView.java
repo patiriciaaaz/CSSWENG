@@ -114,10 +114,10 @@ public class TransactionsView extends JFrame {
         rightPanel.setBorder(BorderFactory.createEmptyBorder(40, 0, 40, 0));
 
         JButton createButton = new JButton("New Transaction");
-        JButton viewSalesButton = new JButton("View Sales");
+
         JButton backButton = new JButton("Back");
 
-        JButton[] actions = { createButton, viewSalesButton, backButton };
+        JButton[] actions = { createButton, backButton };
         for (JButton btn : actions) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setMaximumSize(new Dimension(180, 50));

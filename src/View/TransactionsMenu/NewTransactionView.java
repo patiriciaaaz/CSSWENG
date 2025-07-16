@@ -5,18 +5,14 @@ import Controller.SaleController;
 import Controller.TransactionController;
 import Model.Item;
 import Model.Sale;
-import Model.Transaction;
 
 import javax.swing.*;
 import java.awt.*;
-
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class NewTransactionView extends JFrame {
-    private JComboBox<String> transactionTypeBox;
     private JTextField memberIDField;
     private JComboBox<String> itemDropdown;
     private JTextField quantityField;
@@ -28,6 +24,7 @@ public class NewTransactionView extends JFrame {
     private JLabel totalLabel;
 
     private List<Sale> cart;
+    private List<Item> items;
     private double totalAmount = 0.0;
 
     public NewTransactionView(TransactionController transactionController, SaleController saleController,
@@ -39,6 +36,7 @@ public class NewTransactionView extends JFrame {
         setLayout(new BorderLayout());
 
         cart = new ArrayList<>();
+        items = itemController.getAllItems();
 
         // Sidebar
         JPanel sidebar = new JPanel();
@@ -60,7 +58,11 @@ public class NewTransactionView extends JFrame {
 
         add(sidebar, BorderLayout.WEST);
 
-        // Center panel for transaction form
+        // Main Content
+        JPanel mainContentPanel = new JPanel(new BorderLayout());
+        mainContentPanel.setBackground(Color.WHITE);
+
+        // Left Form
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -72,19 +74,10 @@ public class NewTransactionView extends JFrame {
         formPanel.add(memberIDField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        transactionTypeBox = new JComboBox<>(new String[] {
-                "membership_purchase", "membership_renewal", "consumables", "merchandise"
-        });
-        transactionTypeBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        formPanel.add(new JLabel("Transaction Type:"));
-        formPanel.add(transactionTypeBox);
-        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Item and quantity
-        List<Item> items = itemController.getAllItems();
         itemDropdown = new JComboBox<>();
         for (Item item : items) {
-            itemDropdown.addItem(item.getItemID() + " - " + item.getItemName());
+            itemDropdown
+                    .addItem(item.getItemID() + " - " + item.getItemName() + " (Stock: " + item.getQuantity() + ")");
         }
         itemDropdown.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
@@ -101,18 +94,32 @@ public class NewTransactionView extends JFrame {
         addToCartButton = new JButton("Add to Cart");
         addToCartButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         formPanel.add(addToCartButton);
-        formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        formPanel.add(Box.createVerticalGlue());
 
-        cartPreview = new JTextArea(10, 40);
+        mainContentPanel.add(formPanel, BorderLayout.CENTER);
+
+        // Right Cart Panel
+        JPanel cartPanel = new JPanel();
+        cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS));
+        cartPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        cartPanel.setBackground(new Color(245, 245, 245));
+        cartPanel.setPreferredSize(new Dimension(300, 0));
+
+        JLabel cartLabel = new JLabel("Cart Preview:");
+        cartLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        cartPanel.add(cartLabel);
+        cartPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        cartPreview = new JTextArea(12, 30);
         cartPreview.setEditable(false);
         cartPreview.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        formPanel.add(new JLabel("Cart Preview:"));
-        formPanel.add(new JScrollPane(cartPreview));
-        formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        cartPanel.add(new JScrollPane(cartPreview));
+        cartPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         totalLabel = new JLabel("Total: ₱0.00");
         totalLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        formPanel.add(totalLabel);
+        cartPanel.add(totalLabel);
+        cartPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         confirmButton = new JButton("Confirm Transaction");
         confirmButton.setBackground(new Color(180, 0, 0));
@@ -120,10 +127,10 @@ public class NewTransactionView extends JFrame {
         confirmButton.setFont(new Font("SansSerif", Font.BOLD, 16));
         confirmButton.setFocusPainted(false);
         confirmButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        formPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        formPanel.add(confirmButton);
+        cartPanel.add(confirmButton);
 
-        add(formPanel, BorderLayout.CENTER);
+        mainContentPanel.add(cartPanel, BorderLayout.EAST);
+        add(mainContentPanel, BorderLayout.CENTER);
 
         // Logic
         addToCartButton.addActionListener(e -> {
@@ -135,8 +142,16 @@ public class NewTransactionView extends JFrame {
             int qty;
             try {
                 qty = Integer.parseInt(quantityField.getText());
-                if (qty <= 0)
+                if (qty <= 0) {
                     throw new NumberFormatException();
+                }
+
+                if (qty > item.getQuantity()) {
+                    JOptionPane.showMessageDialog(this, "Insufficient stock. Only " + item.getQuantity() + " left.",
+                            "Stock Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid quantity.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -155,31 +170,22 @@ public class NewTransactionView extends JFrame {
         });
 
         confirmButton.addActionListener(e -> {
-            int transactionID = new Random().nextInt(100000);
             Integer memberID = null;
             try {
                 if (!memberIDField.getText().isBlank()) {
                     memberID = Integer.parseInt(memberIDField.getText().trim());
                 }
             } catch (NumberFormatException ignored) {
+                JOptionPane.showMessageDialog(this, "Invalid Member ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
-            Transaction transaction = new Transaction();
-            transaction.setTransactionID(transactionID);
-            transaction.setMemberID(memberID);
-            transaction.setTransactionType((String) transactionTypeBox.getSelectedItem());
-            transaction.setTransactionDate(new Date(System.currentTimeMillis()));
-            transaction.setAmount(totalAmount);
-            transactionController.addTransaction(transaction, cart, itemController);
-
-            for (Sale s : cart) {
-                s.setTransactionID(transactionID);
-                saleController.addSale(s);
+            boolean success = transactionController.processTransaction(memberID, cart, itemController, saleController);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Transaction recorded.");
+                new TransactionsView(transactionController, saleController, itemController).setVisible(true);
+                dispose();
             }
-
-            JOptionPane.showMessageDialog(this, "Transaction recorded.");
-            new TransactionsView(transactionController, saleController, itemController).setVisible(true);
-            dispose();
         });
 
         backButton.addActionListener(e -> {

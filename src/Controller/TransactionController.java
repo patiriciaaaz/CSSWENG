@@ -5,6 +5,7 @@ import Model.Sale;
 import Model.Transaction;
 import java.sql.*;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
@@ -139,6 +140,46 @@ public class TransactionController {
         }
 
         return transactions;
+    }
+
+    // TRANSACTION PROCESSING
+    public boolean processTransaction(Integer memberID, List<Sale> cart, ItemController itemController,
+            SaleController saleController) {
+        try {
+            int transactionID = new Random().nextInt(100000);
+
+            double totalAmount = 0;
+            for (Sale sale : cart) {
+                Item item = itemController.getItemByID(sale.getItemID());
+                if (item == null || item.getQuantity() < sale.getQuantity()) {
+                    throw new IllegalStateException(
+                            "Insufficient stock for item: " + (item != null ? item.getItemName() : "Unknown"));
+                }
+                totalAmount += item.getPrice() * sale.getQuantity();
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setTransactionID(transactionID);
+            transaction.setMemberID(memberID);
+            transaction.setTransactionType("consumables");
+            transaction.setTransactionDate(new java.sql.Date(System.currentTimeMillis()));
+            transaction.setAmount(totalAmount);
+
+            addTransaction(transaction, cart, itemController);
+
+            for (Sale s : cart) {
+                s.setTransactionID(transactionID);
+                saleController.addSale(s);
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Failed to record transaction: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
 }
