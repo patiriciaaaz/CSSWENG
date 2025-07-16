@@ -109,4 +109,96 @@ public class ItemController {
         return items;
     }
 
+    public String createNewItem(String name, String priceText, String quantityText) {
+        if (name.isBlank()) {
+            return "Item name cannot be empty.";
+        }
+
+        if (itemNameExists(name, null)) {
+            return "An item with this name already exists.";
+        }
+
+        try {
+            double price = Double.parseDouble(priceText.trim());
+            int quantity = Integer.parseInt(quantityText.trim());
+
+            if (price <= 0)
+                return "Price must be greater than 0.";
+            if (quantity < 0)
+                return "Quantity cannot be negative.";
+
+            int itemID = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+            Item item = new Item();
+            item.setItemID(itemID);
+            item.setItemName(name.trim());
+            item.setPrice(price);
+            item.setQuantity(quantity);
+
+            addItem(item);
+            return "Item created with ID: " + itemID;
+        } catch (NumberFormatException e) {
+            return "Invalid price or quantity input.";
+        }
+    }
+
+    public String updateExistingItem(Item item, String newName, String priceText, String quantityText) {
+        if (!newName.equalsIgnoreCase("KEEP")) {
+            if (newName.isBlank())
+                return "Item name cannot be empty.";
+
+            if (itemNameExists(newName, item.getItemID())) {
+                return "Another item with this name already exists.";
+            }
+
+            item.setItemName(newName.trim());
+        }
+
+        try {
+            if (!priceText.equalsIgnoreCase("KEEP")) {
+                double price = Double.parseDouble(priceText.trim());
+                if (price <= 0)
+                    return "Price must be greater than 0.";
+                item.setPrice(price);
+            }
+
+            if (!quantityText.equalsIgnoreCase("KEEP")) {
+                int qty = Integer.parseInt(quantityText.trim());
+                if (qty < 0)
+                    return "Quantity cannot be negative.";
+                item.setQuantity(qty);
+            }
+
+            updateItem(item);
+            return "Item updated successfully.";
+        } catch (NumberFormatException e) {
+            return "Invalid input format.";
+        }
+    }
+
+    public boolean itemNameExists(String name, Integer excludeID) {
+        String sql = "SELECT COUNT(*) FROM items WHERE LOWER(item_name) = ?";
+
+        // If excludeID is not null, add a condition to skip that item (for updates)
+        if (excludeID != null) {
+            sql += " AND itemID != ?";
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name.toLowerCase().trim());
+
+            if (excludeID != null) {
+                pstmt.setInt(2, excludeID);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 }

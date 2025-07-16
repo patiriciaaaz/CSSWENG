@@ -6,7 +6,6 @@ import Model.Item;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 public class UpdateItemView extends JDialog {
     private final JTextField nameField = new JTextField();
@@ -25,7 +24,7 @@ public class UpdateItemView extends JDialog {
         setSize(550, 450);
         setLocationRelativeTo(parent);
 
-        //  Title Bar 
+        // Title Bar
         JPanel titleBar = new JPanel();
         titleBar.setBackground(new Color(180, 0, 0));
         titleBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
@@ -37,7 +36,7 @@ public class UpdateItemView extends JDialog {
         titleBar.setLayout(new BorderLayout());
         titleBar.add(titleLabel, BorderLayout.CENTER);
 
-        // Main Form Panel 
+        // Main Form Panel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBackground(Color.WHITE);
@@ -54,9 +53,8 @@ public class UpdateItemView extends JDialog {
         nameField.setFont(fieldFont);
         nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         nameField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         nameField.setText(item.getItemName());
         formPanel.add(nameField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -69,9 +67,8 @@ public class UpdateItemView extends JDialog {
         priceField.setFont(fieldFont);
         priceField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         priceField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         priceField.setText(String.valueOf(item.getPrice()));
         formPanel.add(priceField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -84,9 +81,8 @@ public class UpdateItemView extends JDialog {
         quantityField.setFont(fieldFont);
         quantityField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         quantityField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         quantityField.setText(String.valueOf(item.getQuantity()));
         formPanel.add(quantityField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 18)));
@@ -131,29 +127,12 @@ public class UpdateItemView extends JDialog {
     }
 
     private void handleUpdateItem(ActionEvent e) {
-        try {
-            String name = nameField.getText().trim();
-            if (!name.equalsIgnoreCase("KEEP") && !name.isBlank()) {
-                item.setItemName(name);
-            }
+        String name = nameField.getText();
+        String price = priceField.getText();
+        String quantity = quantityField.getText();
 
-            String priceInput = priceField.getText().trim();
-            if (!priceInput.equalsIgnoreCase("KEEP")) {
-                double price = Double.parseDouble(priceInput);
-                item.setPrice(price);
-            }
-
-            String qtyInput = quantityField.getText().trim();
-            if (!qtyInput.equalsIgnoreCase("KEEP")) {
-                int qty = Integer.parseInt(qtyInput);
-                item.setQuantity(qty);
-            }
-
-            itemController.updateItem(item);
-            statusLabel.setText("Item updated successfully.");
-        } catch (NumberFormatException ex) {
-            statusLabel.setText("Invalid input format.");
-        }
+        String result = itemController.updateExistingItem(item, name, price, quantity);
+        statusLabel.setText(result);
     }
 
     private void clearFields() {
