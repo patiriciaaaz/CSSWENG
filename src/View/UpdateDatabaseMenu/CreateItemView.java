@@ -1,12 +1,10 @@
 package View.UpdateDatabaseMenu;
 
 import Controller.ItemController;
-import Model.Item;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Random;
 
 public class CreateItemView extends JDialog {
     private final JTextField nameField = new JTextField();
@@ -23,7 +21,7 @@ public class CreateItemView extends JDialog {
 
         this.itemController = itemController;
 
-        //  Title Bar 
+        // Title Bar
         JPanel titleBar = new JPanel();
         titleBar.setBackground(new Color(180, 0, 0));
         titleBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
@@ -35,7 +33,7 @@ public class CreateItemView extends JDialog {
         titleBar.setLayout(new BorderLayout());
         titleBar.add(titleLabel, BorderLayout.CENTER);
 
-        //  Main Form Panel 
+        // Main Form Panel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBackground(Color.WHITE);
@@ -52,9 +50,8 @@ public class CreateItemView extends JDialog {
         nameField.setFont(fieldFont);
         nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         nameField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         formPanel.add(nameField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -66,9 +63,8 @@ public class CreateItemView extends JDialog {
         priceField.setFont(fieldFont);
         priceField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         priceField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         formPanel.add(priceField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -80,9 +76,8 @@ public class CreateItemView extends JDialog {
         quantityField.setFont(fieldFont);
         quantityField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         quantityField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 1, true),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         formPanel.add(quantityField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 18)));
 
@@ -129,23 +124,15 @@ public class CreateItemView extends JDialog {
     }
 
     private void handleCreateItem(ActionEvent e) {
-        try {
-            String name = nameField.getText();
-            double price = Double.parseDouble(priceField.getText());
-            int quantity = Integer.parseInt(quantityField.getText());
+        String name = nameField.getText();
+        String price = priceField.getText();
+        String quantity = quantityField.getText();
 
-            int itemID = new Random().nextInt(100000);
-            Item item = new Item();
-            item.setItemID(itemID);
-            item.setItemName(name);
-            item.setPrice(price);
-            item.setQuantity(quantity);
+        String result = itemController.createNewItem(name, price, quantity);
+        statusLabel.setText(result);
 
-            itemController.addItem(item);
-            statusLabel.setText("Item created with ID: " + itemID);
+        if (result.startsWith("Item created")) {
             clearFields();
-        } catch (NumberFormatException ex) {
-            statusLabel.setText("Invalid price or quantity input.");
         }
     }
 
