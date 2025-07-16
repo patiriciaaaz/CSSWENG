@@ -9,6 +9,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
 
 public class UpdateDatabaseView extends JFrame {
     private JButton updateDbButton;
@@ -24,7 +25,7 @@ public class UpdateDatabaseView extends JFrame {
         this.itemController = itemController;
 
         setTitle("SJ Fitness Gym POS");
-        setSize(1280, 720);
+        setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); 
 
@@ -33,14 +34,14 @@ public class UpdateDatabaseView extends JFrame {
 
         // Side menu panel (red)
         JPanel menuPanel = new JPanel();
-        menuPanel.setBackground(new Color(180, 0, 0)); // Red shade
+        menuPanel.setBackground(new Color(171,19,19)); 
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
         menuPanel.setPreferredSize(new Dimension(250, 0));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
 
         try {
             ImageIcon logoIcon = new ImageIcon(getClass().getResource("../logo.png"));
-            Image logoImg = logoIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+            Image logoImg = logoIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
             logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             menuPanel.add(logoLabel);
@@ -50,7 +51,7 @@ public class UpdateDatabaseView extends JFrame {
         }
 
         // Title/logo at the top of the menu
-        JLabel titleLabel = new JLabel("<html><center>SJ Fitness<br>Gym</center></html>", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("<html><center>SJ Fitness Gym</center></html>", SwingConstants.CENTER);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titleLabel.setForeground(Color.WHITE);
@@ -59,19 +60,19 @@ public class UpdateDatabaseView extends JFrame {
         menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
         // Buttons
-        updateDbButton = new JButton("Update Database");
-        queryOptionsButton = new JButton("Query Options");
-        viewReportsButton = new JButton("View Reports");
-        transactionsButton = new JButton("Transactions");
+        JButton createButton = new JButton("Create Item");
+        JButton updateButton = new JButton("Update Item");
+        JButton deleteButton = new JButton("Delete Item");
+        JButton backButton = new JButton("Back to Main Menu");
 
-        JButton[] buttons = { updateDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
+        JButton[] buttons = { createButton, updateButton, deleteButton, backButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(250, 40)); 
+            btn.setMaximumSize(new Dimension(250, 60)); 
             btn.setBackground(Color.RED);
-            btn.setForeground(new Color(0, 0, 0));
+            btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
-            btn.setFont(new Font("Segoe UI", Font.BOLD, 15)); 
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
             btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             btn.setOpaque(true);
@@ -84,13 +85,59 @@ public class UpdateDatabaseView extends JFrame {
                     btn.setForeground(new Color(180, 0, 0));
                 } else {
                     btn.setBackground(Color.RED);
-                    btn.setForeground(new Color(0, 0, 0));
+                    btn.setForeground(Color.BLACK);
                 }
             });
 
             menuPanel.add(btn);
             menuPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         }
+
+        // sorter
+        String[] sortOptions = { "Alphabetical", "Lowest Stock", "ID" };
+        JComboBox<String> sortCombo = new JComboBox<>(sortOptions);
+        sortCombo.setSelectedIndex(0); // default to Alphabetical
+        sortCombo.setMaximumSize(new Dimension(250, 60));
+        sortCombo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        sortCombo.setBackground(Color.WHITE);
+        sortCombo.setForeground(Color.BLACK);
+        sortCombo.setFocusable(false);
+        sortCombo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+
+        sortCombo.addActionListener(e -> refreshInventory((String)sortCombo.getSelectedItem()));
+
+        JLabel sortLabel = new JLabel("Sort by:");
+        sortLabel.setForeground(Color.WHITE);
+        sortLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        sortLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        sortCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        menuPanel.add(sortLabel);
+        menuPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        menuPanel.add(sortCombo);
+        menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+
+        // Icons
+        ImageIcon addIcon = new ImageIcon(getClass().getResource("../icons/add.png"));
+        ImageIcon editIcon = new ImageIcon(getClass().getResource("../icons/edit.png"));
+        ImageIcon deleteIcon = new ImageIcon(getClass().getResource("../icons/remove.png"));
+        ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
+
+        ImageIcon addIconScaled = new ImageIcon(addIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        ImageIcon editIconScaled = new ImageIcon(editIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        ImageIcon deleteIconScaled = new ImageIcon(deleteIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        ImageIcon backIconScaled = new ImageIcon(backIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+
+        createButton.setIcon(addIconScaled);
+        createButton.setIconTextGap(12);
+        updateButton.setIcon(editIconScaled);
+        updateButton.setIconTextGap(12);
+        deleteButton.setIcon(deleteIconScaled);
+        deleteButton.setIconTextGap(12);
+        backButton.setIcon(backIconScaled);
+        backButton.setIconTextGap(12);
+
 
         add(menuPanel, BorderLayout.WEST);
 
@@ -101,7 +148,7 @@ public class UpdateDatabaseView extends JFrame {
 
         java.util.List<Item> items = itemController.getAllItems();
         Color[] cardColors = {
-            new Color(255, 235, 238), 
+            new Color(255, 225, 230), 
             new Color(232, 245, 233), 
             new Color(232, 234, 246), 
             new Color(255, 249, 196)  
@@ -123,20 +170,20 @@ public class UpdateDatabaseView extends JFrame {
             card.setMinimumSize(cardSize);
 
             JLabel nameLabel = new JLabel(item.getItemName());
-            nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 23));
             nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel idLabel = new JLabel("ID: " + item.getItemID());
-            idLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            idLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
             idLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel priceLabel = new JLabel("₱" + item.getPrice());
-            priceLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            priceLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
             priceLabel.setForeground(new Color(180, 0, 0));
             priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel qtyLabel = new JLabel("Stock: " + item.getQuantity());
-            qtyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            qtyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
             qtyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             card.add(nameLabel);
@@ -181,39 +228,11 @@ public class UpdateDatabaseView extends JFrame {
 
         add(cardScroll, BorderLayout.CENTER);
 
-        // RIGHT: Action Buttons 
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        rightPanel.setBackground(Color.WHITE);
-        rightPanel.setPreferredSize(new Dimension(180, 0));
-        rightPanel.setBorder(BorderFactory.createEmptyBorder(40, 0, 40, 0));
-
-        JButton createButton = new JButton("Create Item");
-        JButton updateButton = new JButton("Update Item");
-        JButton deleteButton = new JButton("Delete Item");
-        JButton backButton = new JButton("Back to Main Menu");
-
-        JButton[] actionButtons = { createButton, updateButton, deleteButton, backButton };
-        for (JButton btn : actionButtons) {
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(180, 50));
-            btn.setFont(new Font("SansSerif", Font.BOLD, 15));
-            btn.setBackground(new Color(180, 0, 0));
-            btn.setForeground(Color.WHITE);
-            btn.setFocusPainted(false);
-            btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            btn.setOpaque(true);
-            rightPanel.add(btn);
-            rightPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        }
-        add(rightPanel, BorderLayout.EAST);
-
         // Button Actions 
         createButton.addActionListener(e -> {
             CreateItemView dialog = new CreateItemView(this, itemController);
             dialog.setVisible(true);
-            refreshInventory();
+            refreshInventory("Alphabetical");
         });
         updateButton.addActionListener(e -> {
             if (selectedItem == null) {
@@ -222,7 +241,7 @@ public class UpdateDatabaseView extends JFrame {
             }
             UpdateItemView updateItemView = new UpdateItemView(this, itemController, selectedItem);
             updateItemView.setVisible(true);
-            refreshInventory();
+            refreshInventory("Alphabetical");
             selectedCard = null;
             selectedItem = null;
         });
@@ -240,7 +259,7 @@ public class UpdateDatabaseView extends JFrame {
             );
             if (confirm == JOptionPane.YES_OPTION) {
                 itemController.deleteItem(selectedItem.getItemID());
-                refreshInventory();
+                refreshInventory("Alphabetical");
                 selectedCard = null;
                 selectedItem = null;
             }
@@ -253,11 +272,20 @@ public class UpdateDatabaseView extends JFrame {
         
     }
 
-    public void refreshInventory() {
+    public void refreshInventory(String sortOption) {
         cardGrid.removeAll();
         java.util.List<Item> items = itemController.getAllItems();
+
+         if ("Alphabetical".equals(sortOption)) {
+            items.sort(Comparator.comparing(Item::getItemName, String.CASE_INSENSITIVE_ORDER));
+        } else if ("Lowest Stock".equals(sortOption)) {
+            items.sort(Comparator.comparingInt(Item::getQuantity));
+        } else if ("ID".equals(sortOption)) {
+            items.sort(Comparator.comparingInt(Item::getItemID));
+        }
+
         Color[] cardColors = {
-            new Color(255, 235, 238), 
+            new Color(255, 225, 230), 
             new Color(232, 245, 233), 
             new Color(232, 234, 246), 
             new Color(255, 249, 196)  
@@ -278,20 +306,20 @@ public class UpdateDatabaseView extends JFrame {
             card.setMinimumSize(cardSize);
 
             JLabel nameLabel = new JLabel(item.getItemName());
-            nameLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+            nameLabel.setFont(new Font("SansSerif", Font.BOLD, 23));
             nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel idLabel = new JLabel("ID: " + item.getItemID());
-            idLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            idLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
             idLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel priceLabel = new JLabel("₱" + item.getPrice());
-            priceLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+            priceLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
             priceLabel.setForeground(new Color(180, 0, 0));
             priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JLabel qtyLabel = new JLabel("Stock: " + item.getQuantity());
-            qtyLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            qtyLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
             qtyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             card.add(nameLabel);
