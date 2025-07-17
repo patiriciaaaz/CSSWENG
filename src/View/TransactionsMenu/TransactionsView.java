@@ -35,7 +35,7 @@ public class TransactionsView extends JFrame {
         menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
 
         try {
-            ImageIcon logoIcon = new ImageIcon(getClass().getResource("../logo.png"));
+            ImageIcon logoIcon = new ImageIcon(getClass().getResource("../icons/logo.png"));
             Image logoImg = logoIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
             logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
