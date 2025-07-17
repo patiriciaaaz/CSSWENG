@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class NewTransactionView extends JFrame {
+public class NewTransactionView extends JDialog {
     private JTextField memberIDField;
     private JComboBox<String> itemDropdown;
     private JTextField quantityField;
@@ -29,10 +29,9 @@ public class NewTransactionView extends JFrame {
 
     public NewTransactionView(TransactionController transactionController, SaleController saleController,
             ItemController itemController, JFrame parentFrame) {
-        setTitle("SJ Fitness Gym POS - New Transaction");
+        super(parentFrame, "SJ Fitness Gym POS - New Transaction", true); 
         setSize(900, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(parentFrame);
         setLayout(new BorderLayout());
 
         cart = new ArrayList<>();
@@ -40,12 +39,23 @@ public class NewTransactionView extends JFrame {
 
         // Sidebar
         JPanel sidebar = new JPanel();
-        sidebar.setBackground(new Color(180, 0, 0));
+        sidebar.setBackground(new Color(171,19,19));
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setPreferredSize(new Dimension(250, 0));
         sidebar.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
 
-        JLabel titleLabel = new JLabel("<html><center>SJ Fitness<br>Gym</center></html>", SwingConstants.CENTER);
+        try {
+            ImageIcon logoIcon = new ImageIcon(getClass().getResource("../logo.png"));
+            Image logoImg = logoIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+            JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
+            logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            sidebar.add(logoLabel);
+            sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
+        } catch (Exception ex) {
+           
+        }
+
+        JLabel titleLabel = new JLabel("<html><center>SJ Fitness Gym</center></html>", SwingConstants.CENTER);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titleLabel.setForeground(Color.WHITE);
@@ -57,6 +67,12 @@ public class NewTransactionView extends JFrame {
         sidebar.add(backButton);
 
         add(sidebar, BorderLayout.WEST);
+        
+        // Icon
+        ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
+        ImageIcon backIconScaled = new ImageIcon(backIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        backButton.setIcon(backIconScaled);
+        backButton.setIconTextGap(12);
 
         // Main Content
         JPanel mainContentPanel = new JPanel(new BorderLayout());
@@ -70,7 +86,14 @@ public class NewTransactionView extends JFrame {
 
         memberIDField = new JTextField();
         memberIDField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        formPanel.add(new JLabel("Member ID (optional):"));
+        memberIDField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        memberIDField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 0, 0), 2, true),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10) 
+        ));
+        JLabel memberIDLabel = new JLabel("Member ID (optional):");
+        memberIDLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        formPanel.add(memberIDLabel);
         formPanel.add(memberIDField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -80,19 +103,33 @@ public class NewTransactionView extends JFrame {
                     .addItem(item.getItemID() + " - " + item.getItemName() + " (Stock: " + item.getQuantity() + ")");
         }
         itemDropdown.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        itemDropdown.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         quantityField = new JTextField();
         quantityField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        quantityField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        quantityField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180, 0, 0), 2, true),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
 
-        formPanel.add(new JLabel("Select Item:"));
+        JLabel selectItemLabel = new JLabel("Select Item:");
+        selectItemLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        formPanel.add(selectItemLabel);
         formPanel.add(itemDropdown);
         formPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        formPanel.add(new JLabel("Quantity:"));
+        JLabel quantityLabel = new JLabel("Quantity:");
+        quantityLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        formPanel.add(quantityLabel);
         formPanel.add(quantityField);
         formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         addToCartButton = new JButton("Add to Cart");
         addToCartButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        addToCartButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        addToCartButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        addToCartButton.setBackground(new Color(180, 0, 0));
+        addToCartButton.setForeground(Color.WHITE);
         formPanel.add(addToCartButton);
         formPanel.add(Box.createVerticalGlue());
 
@@ -112,7 +149,8 @@ public class NewTransactionView extends JFrame {
 
         cartPreview = new JTextArea(12, 30);
         cartPreview.setEditable(false);
-        cartPreview.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        cartPreview.setBorder(BorderFactory.createLineBorder(Color.RED));
+        cartPreview.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cartPanel.add(new JScrollPane(cartPreview));
         cartPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -124,7 +162,7 @@ public class NewTransactionView extends JFrame {
         confirmButton = new JButton("Confirm Transaction");
         confirmButton.setBackground(new Color(180, 0, 0));
         confirmButton.setForeground(Color.WHITE);
-        confirmButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+        confirmButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
         confirmButton.setFocusPainted(false);
         confirmButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         cartPanel.add(confirmButton);
@@ -196,12 +234,13 @@ public class NewTransactionView extends JFrame {
 
     private void styleSidebarButton(JButton button) {
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setMaximumSize(new Dimension(250, 40));
+        button.setMaximumSize(new Dimension(250, 60));
         button.setBackground(Color.RED);
         button.setForeground(Color.BLACK);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        button.setFont(new Font("Segoe UI", Font.BOLD, 18));
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setOpaque(true);
+        button.setFocusPainted(false);
     }
 }

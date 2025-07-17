@@ -12,7 +12,7 @@ public class MainMenu extends JFrame {
 
     public MainMenu() {
         setTitle("SJ Fitness Gym POS");
-        setSize(1280, 720);
+        setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); 
 
@@ -21,14 +21,14 @@ public class MainMenu extends JFrame {
 
         // Side menu panel (red)
         JPanel menuPanel = new JPanel();
-        menuPanel.setBackground(new Color(176,20,20)); 
+        menuPanel.setBackground(new Color(171,19,19)); 
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
         menuPanel.setPreferredSize(new Dimension(250, 0));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
 
         try {
             ImageIcon logoIcon = new ImageIcon(getClass().getResource("../View/logo.png"));
-            Image logoImg = logoIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+            Image logoImg = logoIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             JLabel logoLabel = new JLabel(new ImageIcon(logoImg));
             logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             menuPanel.add(logoLabel);
@@ -38,9 +38,9 @@ public class MainMenu extends JFrame {
         }
 
         // Title/logo at the top of the menu
-        JLabel titleLabel = new JLabel("<html><center>SJ Fitness<br>Gym</center></html>", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("<html><center>SJ Fitness Gym</center></html>", SwingConstants.CENTER);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 25));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titleLabel.setForeground(Color.WHITE);
 
         menuPanel.add(titleLabel);
@@ -55,11 +55,11 @@ public class MainMenu extends JFrame {
         JButton[] buttons = { updateDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(250, 40)); 
+            btn.setMaximumSize(new Dimension(250, 60)); 
             btn.setBackground(Color.RED);
             btn.setForeground(new Color(0, 0, 0));
             btn.setFocusPainted(false);
-            btn.setFont(new Font("Segoe UI", Font.BOLD, 15)); 
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
             btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             btn.setOpaque(true);
@@ -88,6 +88,26 @@ public class MainMenu extends JFrame {
         welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         centerPanel.add(welcomeLabel);
         add(centerPanel, BorderLayout.CENTER);
+
+        //Icons
+        ImageIcon updateDbIcon = new ImageIcon(getClass().getResource("../View/icons/edit-info.png"));
+        ImageIcon queryOptionsIcon = new ImageIcon(getClass().getResource("../View/icons/data-searching.png"));
+        ImageIcon viewReportsIcon = new ImageIcon(getClass().getResource("../View/icons/reports.png"));
+        ImageIcon transactionsIcon = new ImageIcon(getClass().getResource("../View/icons/transaction.png"));
+
+        ImageIcon updateDbIconScaled = new ImageIcon(updateDbIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon queryOptionsIconScaled = new ImageIcon(queryOptionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon viewReportsIconScaled = new ImageIcon(viewReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon transactionsIconScaled = new ImageIcon(transactionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+
+        updateDbButton.setIcon(updateDbIconScaled);
+        updateDbButton.setIconTextGap(12);
+        queryOptionsButton.setIcon(queryOptionsIconScaled);
+        queryOptionsButton.setIconTextGap(12);
+        viewReportsButton.setIcon(viewReportsIconScaled);
+        viewReportsButton.setIconTextGap(12);
+        transactionsButton.setIcon(transactionsIconScaled);
+        transactionsButton.setIconTextGap(12);
     }
 
     // Public methods for controller to attach event listeners
