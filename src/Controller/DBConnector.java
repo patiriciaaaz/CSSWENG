@@ -8,7 +8,7 @@ public class DBConnector {
             return DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/mydb",
                     "root",
-                    "root");
+                    "DLSU1234!");
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

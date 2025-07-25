@@ -13,22 +13,29 @@ public class ItemController {
     }
 
     // Create
-    public void addItem(Item item) {
-        String sql = "INSERT INTO items (itemID, item_name, price, quantity) VALUES (?, ?, ?, ?)";
+    public int addItem(Item item) {
+        String sql = "INSERT INTO items (item_name, price, quantity) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, item.getItemName());
+            pstmt.setDouble(2, item.getPrice());
+            pstmt.setInt(3, item.getQuantity());
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, item.getItemID());
-            pstmt.setString(2, item.getItemName());
-            pstmt.setDouble(3, item.getPrice());
-            pstmt.setInt(4, item.getQuantity());
-
-            pstmt.executeUpdate();
-
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) { 
+                        int generatedID = generatedKeys.getInt(1);
+                        item.setItemID(generatedID);
+                        return generatedID;
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    return -1;
     }
+
 
     // Read
     public Item getItemByID(int itemID) {
@@ -96,7 +103,7 @@ public class ItemController {
             while (rs.next()) {
                 Item item = new Item();
                 item.setItemID(rs.getInt("itemID"));
-                item.setItemName(rs.getString("item_Name"));
+                item.setItemName(rs.getString("item_name"));
                 item.setPrice(rs.getDouble("price"));
                 item.setQuantity(rs.getInt("quantity"));
                 items.add(item);
@@ -127,15 +134,18 @@ public class ItemController {
             if (quantity < 0)
                 return "Quantity cannot be negative.";
 
-            int itemID = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
             Item item = new Item();
-            item.setItemID(itemID);
             item.setItemName(name.trim());
             item.setPrice(price);
             item.setQuantity(quantity);
 
-            addItem(item);
-            return "Item created with ID: " + itemID;
+            int generatedID = addItem(item);
+            if (generatedID > 0) {
+                return "Item created with ID: " + generatedID;
+            } else {
+                return "Failed to create item.";
+            }
+            
         } catch (NumberFormatException e) {
             return "Invalid price or quantity input.";
         }
