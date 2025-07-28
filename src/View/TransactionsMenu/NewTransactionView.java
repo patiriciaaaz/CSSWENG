@@ -17,10 +17,13 @@ public class NewTransactionView extends JDialog {
     private JComboBox<String> itemDropdown;
     private JTextField quantityField;
     private JButton addToCartButton;
+
     private JButton confirmButton;
     private JButton backButton;
 
-    private JTextArea cartPreview;
+    private JList<String> cartPreview;
+    private DefaultListModel<String> cartModel;
+
     private JLabel totalLabel;
 
     private List<Sale> cart;
@@ -29,7 +32,7 @@ public class NewTransactionView extends JDialog {
 
     public NewTransactionView(TransactionController transactionController, SaleController saleController,
             ItemController itemController, JFrame parentFrame) {
-        super(parentFrame, "SJ Fitness Gym POS - New Transaction", true); 
+        super(parentFrame, "SJ Fitness Gym POS - New Transaction", true);
         setSize(900, 600);
         setLocationRelativeTo(parentFrame);
         setLayout(new BorderLayout());
@@ -39,7 +42,7 @@ public class NewTransactionView extends JDialog {
 
         // Sidebar
         JPanel sidebar = new JPanel();
-        sidebar.setBackground(new Color(171,19,19));
+        sidebar.setBackground(new Color(171, 19, 19));
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setPreferredSize(new Dimension(250, 0));
         sidebar.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
@@ -52,7 +55,7 @@ public class NewTransactionView extends JDialog {
             sidebar.add(logoLabel);
             sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
         } catch (Exception ex) {
-           
+
         }
 
         JLabel titleLabel = new JLabel("<html><center>SJ Fitness Gym</center></html>", SwingConstants.CENTER);
@@ -67,7 +70,7 @@ public class NewTransactionView extends JDialog {
         sidebar.add(backButton);
 
         add(sidebar, BorderLayout.WEST);
-        
+
         // Icon
         ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
         ImageIcon backIconScaled = new ImageIcon(backIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
@@ -88,9 +91,8 @@ public class NewTransactionView extends JDialog {
         memberIDField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         memberIDField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         memberIDField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 2, true),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10) 
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 2, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         JLabel memberIDLabel = new JLabel("Member ID (optional):");
         memberIDLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         formPanel.add(memberIDLabel);
@@ -109,9 +111,8 @@ public class NewTransactionView extends JDialog {
         quantityField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         quantityField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         quantityField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 0, 0), 2, true),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(180, 0, 0), 2, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         JLabel selectItemLabel = new JLabel("Select Item:");
         selectItemLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -131,6 +132,26 @@ public class NewTransactionView extends JDialog {
         addToCartButton.setBackground(new Color(180, 0, 0));
         addToCartButton.setForeground(Color.WHITE);
         formPanel.add(addToCartButton);
+        formPanel.add(Box.createRigidArea(new Dimension(0, 10))); // adds spacing
+
+        JButton removeButton = new JButton("Remove Item");
+        removeButton.setBackground(new Color(120, 0, 0));
+        removeButton.setForeground(Color.WHITE);
+        removeButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        removeButton.setFocusPainted(false);
+        removeButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        removeButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        removeButton.addActionListener(e -> {
+            int selectedIndex = cartPreview.getSelectedIndex();
+            if (selectedIndex >= 0 && selectedIndex < cart.size()) {
+                cart.remove(selectedIndex);
+                recalculateCart(itemController);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select an item to remove.", "Remove Item",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        formPanel.add(removeButton);
         formPanel.add(Box.createVerticalGlue());
 
         mainContentPanel.add(formPanel, BorderLayout.CENTER);
@@ -147,10 +168,11 @@ public class NewTransactionView extends JDialog {
         cartPanel.add(cartLabel);
         cartPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        cartPreview = new JTextArea(12, 30);
-        cartPreview.setEditable(false);
-        cartPreview.setBorder(BorderFactory.createLineBorder(Color.RED));
+        cartModel = new DefaultListModel<>();
+        cartPreview = new JList<>(cartModel);
         cartPreview.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        cartPreview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        cartPreview.setBorder(BorderFactory.createLineBorder(Color.RED));
         cartPanel.add(new JScrollPane(cartPreview));
         cartPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -166,6 +188,8 @@ public class NewTransactionView extends JDialog {
         confirmButton.setFocusPainted(false);
         confirmButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         cartPanel.add(confirmButton);
+
+        cartPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         mainContentPanel.add(cartPanel, BorderLayout.EAST);
         add(mainContentPanel, BorderLayout.CENTER);
@@ -195,14 +219,35 @@ public class NewTransactionView extends JDialog {
                 return;
             }
 
-            Sale sale = new Sale();
-            sale.setSalesID(new Random().nextInt(100000));
-            sale.setItemID(item.getItemID());
-            sale.setQuantity(qty);
-            cart.add(sale);
+            boolean found = false;
+            for (Sale existingSale : cart) {
+                if (existingSale.getItemID() == item.getItemID()) {
+                    int newQty = existingSale.getQuantity() + qty;
 
-            totalAmount += item.getPrice() * qty;
-            cartPreview.append(item.getItemName() + " x" + qty + "\n");
+                    if (newQty > item.getQuantity()) {
+                        JOptionPane.showMessageDialog(this,
+                                "Insufficient stock. Only " + item.getQuantity()
+                                        + " available including previously added.",
+                                "Stock Error", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    existingSale.setQuantity(newQty);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                Sale sale = new Sale();
+                sale.setSalesID(new Random().nextInt(100000));
+                sale.setItemID(item.getItemID());
+                sale.setQuantity(qty);
+                cart.add(sale);
+            }
+
+            recalculateCart(itemController);
+
             totalLabel.setText("Total: ₱" + String.format("%.2f", totalAmount));
             quantityField.setText("");
         });
@@ -221,7 +266,10 @@ public class NewTransactionView extends JDialog {
             boolean success = transactionController.processTransaction(memberID, cart, itemController, saleController);
             if (success) {
                 JOptionPane.showMessageDialog(this, "Transaction recorded.");
-                new TransactionsView(transactionController, saleController, itemController).setVisible(true);
+                if (parentFrame instanceof TransactionsView) {
+                    ((TransactionsView) parentFrame).refreshTransactionList(transactionController);
+                }
+                parentFrame.setVisible(true);
                 dispose();
             }
         });
@@ -243,4 +291,20 @@ public class NewTransactionView extends JDialog {
         button.setOpaque(true);
         button.setFocusPainted(false);
     }
+
+    private void recalculateCart(ItemController itemController) {
+        totalAmount = 0.0;
+        cartModel.clear();
+        for (Sale sale : cart) {
+            Item item = itemController.getItemByID(sale.getItemID());
+            if (item != null) {
+                double lineTotal = item.getPrice() * sale.getQuantity();
+                totalAmount += lineTotal;
+                cartModel.addElement(item.getItemName() + " x" + sale.getQuantity());
+            }
+        }
+
+        totalLabel.setText("Total: ₱" + String.format("%.2f", totalAmount));
+    }
+
 }

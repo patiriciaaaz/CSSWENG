@@ -28,7 +28,7 @@ public class TransactionController {
             } else {
                 stmt.setNull(2, java.sql.Types.INTEGER);
             }
-            stmt.setDate(3, transaction.getTransactionDate());
+            stmt.setTimestamp(3, transaction.getTransactionDate());
             stmt.setDouble(4, transaction.getAmount());
             stmt.setString(5, transaction.getTransactionType());
             stmt.executeUpdate();
@@ -69,7 +69,7 @@ public class TransactionController {
                 transaction = new Transaction();
                 transaction.setTransactionID(rs.getInt("transactionID"));
                 transaction.setMemberID(rs.getInt("memberID"));
-                transaction.setTransactionDate(rs.getDate("transaction_date"));
+                transaction.setTransactionDate(rs.getTimestamp("transaction_date"));
                 transaction.setAmount(rs.getDouble("amount"));
                 transaction.setTransactionType(rs.getString("transaction_type"));
             }
@@ -87,7 +87,7 @@ public class TransactionController {
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, transaction.getMemberID());
-            stmt.setDate(2, transaction.getTransactionDate());
+            stmt.setTimestamp(2, transaction.getTransactionDate());
             stmt.setDouble(3, transaction.getAmount());
             stmt.setString(4, transaction.getTransactionType());
             stmt.setInt(5, transaction.getTransactionID());
@@ -129,7 +129,7 @@ public class TransactionController {
                     transaction.setMemberID(memberID);
                 }
 
-                transaction.setTransactionDate(rs.getDate("transaction_date"));
+                transaction.setTransactionDate(rs.getTimestamp("transaction_date"));
                 transaction.setAmount(rs.getDouble("amount"));
                 transaction.setTransactionType(rs.getString("transaction_type"));
                 transactions.add(transaction);
@@ -162,7 +162,7 @@ public class TransactionController {
             transaction.setTransactionID(transactionID);
             transaction.setMemberID(memberID);
             transaction.setTransactionType("consumables");
-            transaction.setTransactionDate(new java.sql.Date(System.currentTimeMillis()));
+            transaction.setTransactionDate(new java.sql.Timestamp(System.currentTimeMillis()));
             transaction.setAmount(totalAmount);
 
             addTransaction(transaction, cart, itemController);

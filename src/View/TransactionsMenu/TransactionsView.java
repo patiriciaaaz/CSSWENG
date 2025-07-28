@@ -29,7 +29,7 @@ public class TransactionsView extends JFrame {
 
         // Sidebar
         JPanel menuPanel = new JPanel();
-        menuPanel.setBackground(new Color(171,19,19));
+        menuPanel.setBackground(new Color(171, 19, 19));
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
         menuPanel.setPreferredSize(new Dimension(250, 0));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
@@ -42,7 +42,7 @@ public class TransactionsView extends JFrame {
             menuPanel.add(logoLabel);
             menuPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         } catch (Exception ex) {
-           
+
         }
 
         JLabel titleLabel = new JLabel("<html><center>SJ Fitness Gym</center></html>", SwingConstants.CENTER);
@@ -157,7 +157,7 @@ public class TransactionsView extends JFrame {
 
     }
 
-    private void refreshTransactionList(TransactionController transactionController) {
+    public void refreshTransactionList(TransactionController transactionController) {
         transactionListPanel.removeAll();
         List<Transaction> transactions = transactionController.getAllTransactions();
         for (Transaction t : transactions) {
