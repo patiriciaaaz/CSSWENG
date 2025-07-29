@@ -10,16 +10,15 @@ public class SaleController {
         this.conn = conn;
     }
 
-    //Create
+    // Create
     public void addSale(Sale sale) {
-        String sql = "INSERT INTO sales (salesID, transactionID, itemID, quantity) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO sales (transactionID, itemID, quantity) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, sale.getSalesID());
-            stmt.setInt(2, sale.getTransactionID());
-            stmt.setInt(3, sale.getItemID());
-            stmt.setInt(4, sale.getQuantity());
+
+            stmt.setInt(1, sale.getTransactionID());
+            stmt.setInt(2, sale.getItemID());
+            stmt.setInt(3, sale.getQuantity());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -27,7 +26,7 @@ public class SaleController {
         }
     }
 
-    //Read
+    // Read
     public Sale getSaleByID(int salesID) {
         String sql = "SELECT * FROM sales WHERE salesID = ?";
         Sale sale = null;
@@ -52,7 +51,7 @@ public class SaleController {
         return sale;
     }
 
-    //Update
+    // Update
     public void updateSale(Sale sale) {
         String sql = "UPDATE sales SET transactionID = ?, itemID = ?, quantity = ? WHERE salesID = ?";
 
@@ -69,7 +68,7 @@ public class SaleController {
         }
     }
 
-    //Delete
+    // Delete
     public void deleteSale(int salesID) {
         String sql = "DELETE FROM sales WHERE salesID = ?";
 

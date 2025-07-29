@@ -18,20 +18,28 @@ public class TransactionController {
 
     // CREATE
     public void addTransaction(Transaction transaction, List<Sale> sales, ItemController itemController) {
-        String sql = "INSERT INTO transactions (transactionID, memberID, transaction_date, amount, transaction_type) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (memberID, transaction_date, amount, transaction_type) " +
+                "VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, transaction.getTransactionID());
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            int index = 1;
             if (transaction.getMemberID() != null) {
-                stmt.setInt(2, transaction.getMemberID());
+                stmt.setInt(index++, transaction.getMemberID());
             } else {
-                stmt.setNull(2, java.sql.Types.INTEGER);
+                stmt.setNull(index++, java.sql.Types.INTEGER);
             }
-            stmt.setTimestamp(3, transaction.getTransactionDate());
-            stmt.setDouble(4, transaction.getAmount());
-            stmt.setString(5, transaction.getTransactionType());
-            stmt.executeUpdate();
+            stmt.setTimestamp(index++, transaction.getTransactionDate());
+            stmt.setDouble(index++, transaction.getAmount());
+            stmt.setString(index++, transaction.getTransactionType());
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int generatedID = generatedKeys.getInt(1);
+                        transaction.setTransactionID(generatedID);
+                    }
+                }
+            }
 
             for (Sale sale : sales) {
                 int itemID = sale.getItemID();
@@ -146,7 +154,6 @@ public class TransactionController {
     public boolean processTransaction(Integer memberID, List<Sale> cart, ItemController itemController,
             SaleController saleController) {
         try {
-            int transactionID = new Random().nextInt(100000);
 
             double totalAmount = 0;
             for (Sale sale : cart) {
@@ -159,7 +166,6 @@ public class TransactionController {
             }
 
             Transaction transaction = new Transaction();
-            transaction.setTransactionID(transactionID);
             transaction.setMemberID(memberID);
             transaction.setTransactionType("consumables");
             transaction.setTransactionDate(new java.sql.Timestamp(System.currentTimeMillis()));
@@ -168,7 +174,7 @@ public class TransactionController {
             addTransaction(transaction, cart, itemController);
 
             for (Sale s : cart) {
-                s.setTransactionID(transactionID);
+                s.setTransactionID(transaction.getTransactionID());
                 saleController.addSale(s);
             }
 

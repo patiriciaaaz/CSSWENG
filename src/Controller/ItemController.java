@@ -23,7 +23,7 @@ public class ItemController {
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) { 
+                    if (generatedKeys.next()) {
                         int generatedID = generatedKeys.getInt(1);
                         item.setItemID(generatedID);
                         return generatedID;
@@ -33,9 +33,8 @@ public class ItemController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    return -1;
+        return -1;
     }
-
 
     // Read
     public Item getItemByID(int itemID) {
@@ -145,7 +144,7 @@ public class ItemController {
             } else {
                 return "Failed to create item.";
             }
-            
+
         } catch (NumberFormatException e) {
             return "Invalid price or quantity input.";
         }
