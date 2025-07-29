@@ -1,11 +1,11 @@
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Transaction {
      private int transactionID;
      private Integer memberID;
-     private Date transactionDate;
+     private Timestamp transactionDate;
      private double amount;
      private String transactionType;
 
@@ -18,7 +18,7 @@ public class Transaction {
           return memberID;
      }
 
-     public Date getTransactionDate() {
+     public Timestamp getTransactionDate() {
           return transactionDate;
      }
 
@@ -39,7 +39,7 @@ public class Transaction {
           this.memberID = memberID;
      }
 
-     public void setTransactionDate(Date transactionDate) {
+     public void setTransactionDate(Timestamp transactionDate) {
           this.transactionDate = transactionDate;
      }
 
