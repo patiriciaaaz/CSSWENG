@@ -1,7 +1,3 @@
 *.class
-src/tempCodeRunnerFile.java
-src/db.sql
-src/Controller/DBConnector.java
-src/GYMsystem.mwb
-src/.classpath
+
 
