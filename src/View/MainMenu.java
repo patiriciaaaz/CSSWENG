@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 public class MainMenu extends JFrame {
     private JButton updateDbButton;
+    private JButton memberDbButton;
     private JButton queryOptionsButton;
     private JButton viewReportsButton;
     private JButton transactionsButton;
@@ -48,11 +49,12 @@ public class MainMenu extends JFrame {
 
         // Buttons
         updateDbButton = new JButton("Update Database");
+        memberDbButton = new JButton("Member Database");
         queryOptionsButton = new JButton("Query Options");
         viewReportsButton = new JButton("View Reports");
         transactionsButton = new JButton("Transactions");
 
-        JButton[] buttons = { updateDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
+        JButton[] buttons = { updateDbButton, memberDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setMaximumSize(new Dimension(250, 60)); 
@@ -113,6 +115,10 @@ public class MainMenu extends JFrame {
     // Public methods for controller to attach event listeners
     public void addUpdateDbListener(ActionListener listener) {
         updateDbButton.addActionListener(listener);
+    }
+
+    public void addMemberDbListener(ActionListener listener) {
+        memberDbButton.addActionListener(listener);
     }
 
     public void addQueryOptionsListener(ActionListener listener) {
