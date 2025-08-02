@@ -5,14 +5,14 @@ import Controller.ItemController;
 import Controller.SaleController;
 import Controller.TransactionController;
 import View.MainMenu;
+import View.ReportsMenu.ViewReportsView;
 import View.TransactionsMenu.TransactionsView;
 import java.sql.Connection;
-
 
 public class MyApp {
 
     public static void main(String[] args) {
-        
+
         javax.swing.SwingUtilities.invokeLater(() -> {
             showMainMenu();
 
@@ -40,7 +40,8 @@ public class MyApp {
         });
 
         menu.addViewReportsListener(e -> {
-            System.out.println("View Reports selected");
+            new ViewReportsView(transactionController, saleController, itemController).setVisible(true);
+            menu.dispose();
         });
 
         menu.addTransactionsListener(e -> {
