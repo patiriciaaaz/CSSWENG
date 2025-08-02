@@ -2,6 +2,8 @@ package Controller;
 
 import Model.Sale;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SaleController {
     private Connection conn;
@@ -79,5 +81,28 @@ public class SaleController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Sale> getAllSales() {
+        List<Sale> salesList = new ArrayList<>();
+        String sql = "SELECT * FROM sales";
+
+        try (Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Sale sale = new Sale();
+                sale.setSalesID(rs.getInt("salesID"));
+                sale.setTransactionID(rs.getInt("transactionID"));
+                sale.setItemID(rs.getInt("itemID"));
+                sale.setQuantity(rs.getInt("quantity"));
+                salesList.add(sale);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return salesList;
     }
 }

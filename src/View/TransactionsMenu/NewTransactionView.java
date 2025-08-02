@@ -102,7 +102,8 @@ public class NewTransactionView extends JDialog {
         itemDropdown = new JComboBox<>();
         for (Item item : items) {
             itemDropdown
-                    .addItem(item.getItemID() + " - " + item.getItemName() + " (Stock: " + item.getQuantity() + ")");
+                    .addItem(item.getItemID() + " - " + item.getItemName() + " - P" + item.getPrice() + " ("
+                            + item.getQuantity() + " pcs" + ")");
         }
         itemDropdown.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         itemDropdown.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -295,12 +296,16 @@ public class NewTransactionView extends JDialog {
     private void recalculateCart(ItemController itemController) {
         totalAmount = 0.0;
         cartModel.clear();
+
         for (Sale sale : cart) {
             Item item = itemController.getItemByID(sale.getItemID());
             if (item != null) {
                 double lineTotal = item.getPrice() * sale.getQuantity();
                 totalAmount += lineTotal;
-                cartModel.addElement(item.getItemName() + " x" + sale.getQuantity());
+
+                String entry = sale.getQuantity() + "x " + item.getItemName() + " - P"
+                        + String.format("%.0f", lineTotal);
+                cartModel.addElement(entry);
             }
         }
 
