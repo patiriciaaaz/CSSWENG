@@ -13,6 +13,7 @@ import java.util.List;
 
 public class TransactionsView extends JFrame {
     private JButton updateDbButton;
+    private JButton memberDbButton;
     private JButton queryOptionsButton;
     private JButton viewReportsButton;
     private JButton transactionsButton;
@@ -192,6 +193,10 @@ public class TransactionsView extends JFrame {
     // For controller access
     public void addUpdateDbListener(ActionListener listener) {
         updateDbButton.addActionListener(listener);
+    }
+
+    public void addMemberDbListener(ActionListener listener) {
+        memberDbButton.addActionListener(listener);
     }
 
     public void addQueryOptionsListener(ActionListener listener) {
