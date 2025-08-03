@@ -108,7 +108,7 @@ public class AddMemberView extends JDialog {
         int currentMonth = LocalDate.now().getMonthValue();
         int currentDay = LocalDate.now().getDayOfMonth();
 
-        for (int year = 1950; year <= currentYear; year++) {
+        for (int year = 1930; year <= currentYear; year++) {
             dobYearBox.addItem(year);
             regYearBox.addItem(year);
         }

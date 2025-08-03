@@ -172,6 +172,7 @@ public class MemberDatabaseView extends JFrame {
     private void showAddMemberDialog() {
         AddMemberView addMemberView = new AddMemberView(memberController);
         addMemberView.setVisible(true);
+        populateMemberCards();
     }
 
     private void showUpdateMemberDialog(MemberController memberController, Member member) {
