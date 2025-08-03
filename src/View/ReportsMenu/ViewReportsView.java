@@ -76,6 +76,31 @@ public class ViewReportsView extends JFrame {
             menuPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         }
 
+        // Icons
+        ImageIcon salesReportsIcon = new ImageIcon(getClass().getResource("../icons/sales-report.png"));
+        ImageIcon memberReportsIcon = new ImageIcon(getClass().getResource("../icons/member-report.png"));
+        ImageIcon transactionReportsIcon = new ImageIcon(getClass().getResource("../icons/transaction-report.png"));
+        ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
+
+        ImageIcon salesReportsIconScaled = new ImageIcon(
+                salesReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon memberReportsIconScaled = new ImageIcon(
+                memberReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon transactionReportsIconScaled = new ImageIcon(
+                transactionReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon backIconScaled = new ImageIcon(
+                backIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+
+        salesReportsBtn.setIcon(salesReportsIconScaled);
+        salesReportsBtn.setIconTextGap(12);
+        membershipReportsBtn.setIcon(memberReportsIconScaled);
+        membershipReportsBtn.setIconTextGap(12);
+        transactionReportsBtn.setIcon(transactionReportsIconScaled);
+        transactionReportsBtn.setIconTextGap(12);
+        backButton.setIcon(backIconScaled);
+        backButton.setIconTextGap(12);
+    
+        
         add(menuPanel, BorderLayout.WEST);
 
         // Center placeholder

@@ -93,13 +93,14 @@ public class MainMenu extends JFrame {
 
         // Icons
         ImageIcon updateDbIcon = new ImageIcon(getClass().getResource("../View/icons/edit-info.png"));
-
+        ImageIcon memberDbIcon = new ImageIcon(getClass().getResource("../View/icons/member.png"));
         ImageIcon viewReportsIcon = new ImageIcon(getClass().getResource("../View/icons/reports.png"));
         ImageIcon transactionsIcon = new ImageIcon(getClass().getResource("../View/icons/transaction.png"));
 
         ImageIcon updateDbIconScaled = new ImageIcon(
                 updateDbIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
-
+        ImageIcon memberDbIconScaled = new ImageIcon(
+                memberDbIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
         ImageIcon viewReportsIconScaled = new ImageIcon(
                 viewReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
         ImageIcon transactionsIconScaled = new ImageIcon(
@@ -107,7 +108,8 @@ public class MainMenu extends JFrame {
 
         updateDbButton.setIcon(updateDbIconScaled);
         updateDbButton.setIconTextGap(12);
-
+        memberDbButton.setIcon(memberDbIconScaled);
+        memberDbButton.setIconTextGap(12);
         viewReportsButton.setIcon(viewReportsIconScaled);
         viewReportsButton.setIconTextGap(12);
         transactionsButton.setIcon(transactionsIconScaled);

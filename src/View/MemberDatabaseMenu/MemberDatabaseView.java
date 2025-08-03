@@ -61,6 +61,25 @@ public class MemberDatabaseView extends JFrame {
             menuPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         }
 
+        // Icons
+        ImageIcon addIcon = new ImageIcon(getClass().getResource("../icons/add.png"));
+        ImageIcon editIcon = new ImageIcon(getClass().getResource("../icons/edit.png"));
+        ImageIcon deleteIcon = new ImageIcon(getClass().getResource("../icons/remove.png"));
+        ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
+
+        ImageIcon addIconScaled = new ImageIcon(addIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        ImageIcon editIconScaled = new ImageIcon(editIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        ImageIcon deleteIconScaled = new ImageIcon(deleteIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        ImageIcon backIconScaled = new ImageIcon(backIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+
+        addBtn.setIcon(addIconScaled);
+        addBtn.setIconTextGap(12);
+        updateBtn.setIcon(editIconScaled);
+        updateBtn.setIconTextGap(12);
+        deleteBtn.setIcon(deleteIconScaled);
+        deleteBtn.setIconTextGap(12);
+        backBtn.setIcon(backIconScaled);
+        backBtn.setIconTextGap(12);
         add(menuPanel, BorderLayout.WEST);
 
         // Use BoxLayout for full-width cards

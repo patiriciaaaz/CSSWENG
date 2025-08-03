@@ -118,6 +118,11 @@ public class SalesReportView extends JFrame {
             }
         });
 
+        ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
+        Image backImg = backIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
+        backButton.setIcon(new ImageIcon(backImg));
+        backButton.setIconTextGap(12);
+
         backButton.addActionListener(e -> {
             MyApp.showMainMenu();
             dispose();
