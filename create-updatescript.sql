@@ -31,7 +31,7 @@ CREATE TABLE `items` (
   `quantity` int NOT NULL,
   PRIMARY KEY (`itemID`),
   UNIQUE KEY `itemID_UNIQUE` (`itemID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `items` (
 
 LOCK TABLES `items` WRITE;
 /*!40000 ALTER TABLE `items` DISABLE KEYS */;
-INSERT INTO `items` VALUES (1,'Pocari Sweat',100.00,27);
+INSERT INTO `items` VALUES (4,'Pocari Sweat',60.00,97),(5,'Yuri',120.00,97),(6,'Gatorade',50.00,100);
 /*!40000 ALTER TABLE `items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,11 +58,14 @@ CREATE TABLE `members` (
   `date_of_birth` date NOT NULL,
   `contact_information` varchar(11) NOT NULL,
   `registration_date` date DEFAULT NULL,
-  `signed_waver` enum('TRUE','FALSE') DEFAULT NULL,
+  `signed_waiver` enum('TRUE','FALSE') DEFAULT NULL,
   `membership_status` enum('ACTIVE','INACTIVE','EXPIRED') DEFAULT NULL,
+  `membership_type` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`memberID`),
-  UNIQUE KEY `customerID_UNIQUE` (`memberID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  UNIQUE KEY `customerID_UNIQUE` (`memberID`),
+  KEY `fk_membership_type` (`membership_type`),
+  CONSTRAINT `fk_membership_type` FOREIGN KEY (`membership_type`) REFERENCES `membership_types` (`membership_type`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,6 +74,7 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
+INSERT INTO `members` VALUES (1,'SALVADOR','MIGUEL','2002-11-07','09063056377','2025-08-03','TRUE','ACTIVE','NORMAL'),(2,'SALVADOR','LOGAN','2002-11-09','09063056377','2025-08-03','TRUE','ACTIVE','NORMAL'),(3,'SALVADOR','YURI','2003-07-24','09063056377','2025-08-25','TRUE','ACTIVE','NORMAL');
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,35 +104,6 @@ INSERT INTO `membership_types` VALUES ('NORMAL',0),('PWD',0.2),('SENIOR',0.2);
 UNLOCK TABLES;
 
 --
--- Table structure for table `memberships`
---
-
-DROP TABLE IF EXISTS `memberships`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `memberships` (
-  `membershipID` int unsigned NOT NULL AUTO_INCREMENT,
-  `memberID` int unsigned NOT NULL,
-  `membership_type` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`membershipID`),
-  UNIQUE KEY `cardID_UNIQUE` (`membershipID`),
-  KEY `FKmt01_idx` (`membership_type`),
-  KEY `FKmt02_idx` (`memberID`),
-  CONSTRAINT `FKmt01` FOREIGN KEY (`membership_type`) REFERENCES `membership_types` (`membership_type`),
-  CONSTRAINT `FKmt02` FOREIGN KEY (`memberID`) REFERENCES `members` (`memberID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `memberships`
---
-
-LOCK TABLES `memberships` WRITE;
-/*!40000 ALTER TABLE `memberships` DISABLE KEYS */;
-/*!40000 ALTER TABLE `memberships` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `sales`
 --
 
@@ -146,7 +121,7 @@ CREATE TABLE `sales` (
   KEY `FKst01_idx` (`transactionID`),
   CONSTRAINT `FKst01` FOREIGN KEY (`transactionID`) REFERENCES `transactions` (`transactionID`),
   CONSTRAINT `FKst02` FOREIGN KEY (`itemID`) REFERENCES `items` (`itemID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +130,7 @@ CREATE TABLE `sales` (
 
 LOCK TABLES `sales` WRITE;
 /*!40000 ALTER TABLE `sales` DISABLE KEYS */;
-INSERT INTO `sales` VALUES (1,3,1,1);
+INSERT INTO `sales` VALUES (4,5,4,1),(5,6,4,2),(6,6,5,3);
 /*!40000 ALTER TABLE `sales` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,7 +150,7 @@ CREATE TABLE `transactions` (
   PRIMARY KEY (`transactionID`),
   UNIQUE KEY `saleID_UNIQUE` (`transactionID`),
   KEY `FKts01_idx` (`memberID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +159,7 @@ CREATE TABLE `transactions` (
 
 LOCK TABLES `transactions` WRITE;
 /*!40000 ALTER TABLE `transactions` DISABLE KEYS */;
-INSERT INTO `transactions` VALUES (1,NULL,'2025-07-29 21:01:27',100,'consumables'),(2,NULL,'2025-07-29 21:01:34',2100,'consumables'),(3,NULL,'2025-07-29 21:05:32',100,'consumables');
+INSERT INTO `transactions` VALUES (5,NULL,'2025-07-29 22:09:45',60,'consumables'),(6,NULL,'2025-08-02 17:48:25',480,'consumables');
 /*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -197,4 +172,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-29 21:07:51
+-- Dump completed on 2025-08-03 18:34:51

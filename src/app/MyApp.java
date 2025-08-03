@@ -2,9 +2,11 @@ package app;
 
 import Controller.DBConnector;
 import Controller.ItemController;
+import Controller.MemberController;
 import Controller.SaleController;
 import Controller.TransactionController;
 import View.MainMenu;
+import View.MemberDatabaseMenu.MemberDatabaseView;
 import View.ReportsMenu.ViewReportsView;
 import View.TransactionsMenu.TransactionsView;
 import java.sql.Connection;
@@ -29,14 +31,16 @@ public class MyApp {
         ItemController itemController = new ItemController(conn);
         SaleController saleController = new SaleController(conn);
         TransactionController transactionController = new TransactionController(conn);
+        MemberController memberController = new MemberController(conn);
 
         menu.addUpdateDbListener(e -> {
             new View.UpdateDatabaseMenu.UpdateDatabaseView(itemController).setVisible(true);
             menu.dispose();
         });
 
-        menu.addQueryOptionsListener(e -> {
-            System.out.println("Query Options selected");
+        menu.addMemberDbListener(e -> {
+            new MemberDatabaseView(memberController).setVisible(true);
+            menu.dispose();
         });
 
         menu.addViewReportsListener(e -> {
