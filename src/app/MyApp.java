@@ -25,13 +25,12 @@ public class MyApp {
         MainMenu menu = new MainMenu();
         menu.setVisible(true);
 
-        DBConnector db = new DBConnector();
-        Connection conn = db.getConnection();
+        Connection conn = DBConnector.getConnection();
 
         ItemController itemController = new ItemController(conn);
         SaleController saleController = new SaleController(conn);
-        TransactionController transactionController = new TransactionController(conn);
         MemberController memberController = new MemberController(conn);
+        TransactionController transactionController = new TransactionController(conn, memberController);
 
         menu.addUpdateDbListener(e -> {
             new View.UpdateDatabaseMenu.UpdateDatabaseView(itemController).setVisible(true);

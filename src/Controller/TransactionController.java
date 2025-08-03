@@ -6,14 +6,19 @@ import Model.Transaction;
 import java.sql.*;
 import java.util.List;
 
-
 import javax.swing.JOptionPane;
 
 public class TransactionController {
     private Connection conn;
+    private MemberController memberController;
 
     public TransactionController(Connection conn) {
         this.conn = conn;
+    }
+
+    public TransactionController(Connection conn, MemberController memberController) {
+        this.conn = conn;
+        this.memberController = memberController;
     }
 
     // CREATE
@@ -186,6 +191,11 @@ public class TransactionController {
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
+    }
+
+
+    public MemberController getMemberController() {
+        return memberController;
     }
 
 }

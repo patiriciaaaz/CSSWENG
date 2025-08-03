@@ -218,4 +218,20 @@ public class MemberController {
             return "Invalid input format.";
         }
     }
+
+    public boolean memberExists(int memberID) {
+        String sql = "SELECT 1 FROM members WHERE memberID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, memberID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
+
+    
 }
