@@ -50,6 +50,8 @@ public class UpdateMemberView extends JDialog {
         }
         for (int i = 1930; i <= LocalDate.now().getYear(); i++) {
             birthYearBox.addItem(i);
+        }
+        for (int i = 2024; i <= LocalDate.now().getYear(); i++) {
             regYearBox.addItem(i);
         }
 

@@ -110,12 +110,15 @@ public class AddMemberView extends JDialog {
 
         for (int year = 1930; year <= currentYear; year++) {
             dobYearBox.addItem(year);
+        }
+        for (int year = 2024; year <= currentYear; year++) {
             regYearBox.addItem(year);
         }
         for (int month = 1; month <= 12; month++) {
             dobMonthBox.addItem(month);
             regMonthBox.addItem(month);
         }
+
         for (int day = 1; day <= 31; day++) {
             dobDayBox.addItem(day);
             regDayBox.addItem(day);
