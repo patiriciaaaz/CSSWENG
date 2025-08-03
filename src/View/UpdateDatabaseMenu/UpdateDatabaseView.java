@@ -13,6 +13,7 @@ import java.util.Comparator;
 
 public class UpdateDatabaseView extends JFrame {
     private JButton updateDbButton;
+    private JButton memberDbButton;
     private JButton queryOptionsButton;
     private JButton viewReportsButton;
     private JButton transactionsButton;
@@ -357,6 +358,10 @@ public class UpdateDatabaseView extends JFrame {
     // Public methods for controller to attach event listeners
     public void addUpdateDbListener(ActionListener listener) {
         updateDbButton.addActionListener(listener);
+    }
+
+    public void addMemberDbListener(ActionListener listener) {
+        memberDbButton.addActionListener(listener);
     }
 
     public void addQueryOptionsListener(ActionListener listener) {
