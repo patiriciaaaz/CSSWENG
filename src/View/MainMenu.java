@@ -15,14 +15,14 @@ public class MainMenu extends JFrame {
         setTitle("SJ Fitness Gym POS");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
 
         // Main Layout
         setLayout(new BorderLayout());
 
         // Side menu panel (red)
         JPanel menuPanel = new JPanel();
-        menuPanel.setBackground(new Color(171,19,19)); 
+        menuPanel.setBackground(new Color(171, 19, 19));
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
         menuPanel.setPreferredSize(new Dimension(250, 0));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
@@ -35,7 +35,7 @@ public class MainMenu extends JFrame {
             menuPanel.add(logoLabel);
             menuPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         } catch (Exception ex) {
-           
+
         }
 
         // Title/logo at the top of the menu
@@ -51,18 +51,18 @@ public class MainMenu extends JFrame {
         updateDbButton = new JButton("Update Database");
         memberDbButton = new JButton("Member Database");
         queryOptionsButton = new JButton("Query Options");
-        viewReportsButton = new JButton("View Reports");
+        viewReportsButton = new JButton("Reports");
         transactionsButton = new JButton("Transactions");
 
         JButton[] buttons = { updateDbButton, memberDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setMaximumSize(new Dimension(250, 60)); 
+            btn.setMaximumSize(new Dimension(250, 60));
             btn.setBackground(Color.RED);
             btn.setForeground(new Color(0, 0, 0));
             btn.setFocusPainted(false);
-            btn.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
-            btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); 
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             btn.setOpaque(true);
 
@@ -91,16 +91,20 @@ public class MainMenu extends JFrame {
         centerPanel.add(welcomeLabel);
         add(centerPanel, BorderLayout.CENTER);
 
-        //Icons
+        // Icons
         ImageIcon updateDbIcon = new ImageIcon(getClass().getResource("../View/icons/edit-info.png"));
         ImageIcon queryOptionsIcon = new ImageIcon(getClass().getResource("../View/icons/data-searching.png"));
         ImageIcon viewReportsIcon = new ImageIcon(getClass().getResource("../View/icons/reports.png"));
         ImageIcon transactionsIcon = new ImageIcon(getClass().getResource("../View/icons/transaction.png"));
 
-        ImageIcon updateDbIconScaled = new ImageIcon(updateDbIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
-        ImageIcon queryOptionsIconScaled = new ImageIcon(queryOptionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
-        ImageIcon viewReportsIconScaled = new ImageIcon(viewReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
-        ImageIcon transactionsIconScaled = new ImageIcon(transactionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon updateDbIconScaled = new ImageIcon(
+                updateDbIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon queryOptionsIconScaled = new ImageIcon(
+                queryOptionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon viewReportsIconScaled = new ImageIcon(
+                viewReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+        ImageIcon transactionsIconScaled = new ImageIcon(
+                transactionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
 
         updateDbButton.setIcon(updateDbIconScaled);
         updateDbButton.setIconTextGap(12);
