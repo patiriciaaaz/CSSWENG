@@ -135,9 +135,5 @@ public class UpdateItemView extends JDialog {
         statusLabel.setText(result);
     }
 
-    private void clearFields() {
-        nameField.setText("");
-        priceField.setText("");
-        quantityField.setText("");
-    }
+    
 }

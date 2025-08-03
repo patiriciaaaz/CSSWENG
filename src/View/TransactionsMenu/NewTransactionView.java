@@ -264,9 +264,26 @@ public class NewTransactionView extends JDialog {
                 return;
             }
 
+            if (memberID != null && !transactionController.getMemberController().memberExists(memberID)) {
+                JOptionPane.showMessageDialog(this, "Member ID not found in database.", "Invalid Member",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             boolean success = transactionController.processTransaction(memberID, cart, itemController, saleController);
             if (success) {
-                JOptionPane.showMessageDialog(this, "Transaction recorded.");
+                if (memberID != null) {
+                    var member = transactionController.getMemberController().getMemberByID(memberID);
+                    if (member != null) {
+                        JOptionPane.showMessageDialog(this,
+                                "Transaction recorded for " + member.getFirstName() + " " + member.getLastName() + ".");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Transaction recorded.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Transaction recorded.");
+                }
+
                 if (parentFrame instanceof TransactionsView) {
                     ((TransactionsView) parentFrame).refreshTransactionList(transactionController);
                 }
