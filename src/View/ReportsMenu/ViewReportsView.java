@@ -45,10 +45,10 @@ public class ViewReportsView extends JFrame {
         // Buttons
         JButton salesReportsBtn = new JButton("Sales Reports");
         JButton membershipReportsBtn = new JButton("Membership Reports");
-        JButton transactionReportsBtn = new JButton("Transaction Reports");
+        JButton memberTransactionsBtn = new JButton("Member Transactions");
         JButton backButton = new JButton("Back to Main Menu");
 
-        JButton[] buttons = { salesReportsBtn, membershipReportsBtn, transactionReportsBtn, backButton };
+        JButton[] buttons = { salesReportsBtn, membershipReportsBtn, memberTransactionsBtn, backButton };
 
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -95,12 +95,11 @@ public class ViewReportsView extends JFrame {
         salesReportsBtn.setIconTextGap(12);
         membershipReportsBtn.setIcon(memberReportsIconScaled);
         membershipReportsBtn.setIconTextGap(12);
-        transactionReportsBtn.setIcon(transactionReportsIconScaled);
-        transactionReportsBtn.setIconTextGap(12);
+        memberTransactionsBtn.setIcon(transactionReportsIconScaled);
+        memberTransactionsBtn.setIconTextGap(12);
         backButton.setIcon(backIconScaled);
         backButton.setIconTextGap(12);
-    
-        
+
         add(menuPanel, BorderLayout.WEST);
 
         // Center placeholder
@@ -110,7 +109,7 @@ public class ViewReportsView extends JFrame {
 
         // Actions
         salesReportsBtn.addActionListener(e -> {
-            new SalesReportView(saleController, itemController).setVisible(true);
+            new SalesReportView(this, saleController, itemController).setVisible(true);
             dispose();
         });
 
@@ -118,8 +117,9 @@ public class ViewReportsView extends JFrame {
             JOptionPane.showMessageDialog(this, "Membership Report not yet implemented.");
         });
 
-        transactionReportsBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Transaction Report clicked (to be implemented).");
+        memberTransactionsBtn.addActionListener(e -> {
+            new MemberTransactionsView(this, transactionController).setVisible(true);
+            dispose();
         });
 
         backButton.addActionListener(e -> {
