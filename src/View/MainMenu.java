@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 public class MainMenu extends JFrame {
     private JButton updateDbButton;
     private JButton memberDbButton;
-    private JButton queryOptionsButton;
+
     private JButton viewReportsButton;
     private JButton transactionsButton;
 
@@ -50,11 +50,11 @@ public class MainMenu extends JFrame {
         // Buttons
         updateDbButton = new JButton("Update Database");
         memberDbButton = new JButton("Member Database");
-        queryOptionsButton = new JButton("Query Options");
+
         viewReportsButton = new JButton("Reports");
         transactionsButton = new JButton("Transactions");
 
-        JButton[] buttons = { updateDbButton, memberDbButton, queryOptionsButton, viewReportsButton, transactionsButton };
+        JButton[] buttons = { updateDbButton, memberDbButton, viewReportsButton, transactionsButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setMaximumSize(new Dimension(250, 60));
@@ -93,14 +93,13 @@ public class MainMenu extends JFrame {
 
         // Icons
         ImageIcon updateDbIcon = new ImageIcon(getClass().getResource("../View/icons/edit-info.png"));
-        ImageIcon queryOptionsIcon = new ImageIcon(getClass().getResource("../View/icons/data-searching.png"));
+
         ImageIcon viewReportsIcon = new ImageIcon(getClass().getResource("../View/icons/reports.png"));
         ImageIcon transactionsIcon = new ImageIcon(getClass().getResource("../View/icons/transaction.png"));
 
         ImageIcon updateDbIconScaled = new ImageIcon(
                 updateDbIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
-        ImageIcon queryOptionsIconScaled = new ImageIcon(
-                queryOptionsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
+
         ImageIcon viewReportsIconScaled = new ImageIcon(
                 viewReportsIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH));
         ImageIcon transactionsIconScaled = new ImageIcon(
@@ -108,8 +107,7 @@ public class MainMenu extends JFrame {
 
         updateDbButton.setIcon(updateDbIconScaled);
         updateDbButton.setIconTextGap(12);
-        queryOptionsButton.setIcon(queryOptionsIconScaled);
-        queryOptionsButton.setIconTextGap(12);
+
         viewReportsButton.setIcon(viewReportsIconScaled);
         viewReportsButton.setIconTextGap(12);
         transactionsButton.setIcon(transactionsIconScaled);
@@ -123,10 +121,6 @@ public class MainMenu extends JFrame {
 
     public void addMemberDbListener(ActionListener listener) {
         memberDbButton.addActionListener(listener);
-    }
-
-    public void addQueryOptionsListener(ActionListener listener) {
-        queryOptionsButton.addActionListener(listener);
     }
 
     public void addViewReportsListener(ActionListener listener) {

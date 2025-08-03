@@ -3,6 +3,8 @@ package Controller;
 import Model.Member;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,21 +15,20 @@ public class MemberController {
         this.conn = conn;
     }
 
-    //Create
+    // Create
     public int addMember(Member member) {
-        String sql = "INSERT INTO members (memberID, last_name, first_name, date_of_birth, contact_information, registration_date, signed_waiver, membership_type, membership_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO members (last_name, first_name, date_of_birth, contact_information, registration_date, signed_waiver, membership_type, membership_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, member.getMemberID());
-            stmt.setString(2, member.getLastName());
-            stmt.setString(3, member.getFirstName());
-            stmt.setDate(4, Date.valueOf(member.getDateOfBirth()));
-            stmt.setString(5, member.getContactInformation());
-            stmt.setDate(6, Date.valueOf(member.getRegistrationDate()));
-            stmt.setString(7, member.getSignedWaiver());
-            stmt.setString(8, member.getMembershipType());
-            stmt.setString(9, member.getMembershipStatus());
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, member.getLastName());
+            stmt.setString(2, member.getFirstName());
+            stmt.setDate(3, Date.valueOf(member.getDateOfBirth()));
+            stmt.setString(4, member.getContactInformation());
+            stmt.setDate(5, Date.valueOf(member.getRegistrationDate()));
+            stmt.setString(6, member.getSignedWaiver());
+            stmt.setString(7, member.getMembershipType());
+            stmt.setString(8, member.getMembershipStatus());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -48,7 +49,7 @@ public class MemberController {
         return -1;
     }
 
-    //Read
+    // Read
     public Member getMemberByID(int memberID) {
         String sql = "SELECT * FROM members WHERE memberID = ?";
         Member member = null;
@@ -78,7 +79,7 @@ public class MemberController {
         return member;
     }
 
-    //Update
+    // Update
     public void updateMember(Member member) {
         String sql = "UPDATE members SET last_name = ?, first_name = ?, date_of_birth = ?, contact_information = ?, registration_date = ?, signed_waiver = ?, membership_type = ?, membership_status = ? WHERE memberID = ?";
 
@@ -99,15 +100,17 @@ public class MemberController {
         }
     }
 
-    //Delete
-    public void deleteMember(int memberID) {
+    // Delete
+    public boolean deleteMember(int memberID) {
         String sql = "DELETE FROM members WHERE memberID = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, memberID);
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // returns true if a row was deleted
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -119,7 +122,7 @@ public class MemberController {
         try (PreparedStatement pstmt = conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery()) {
 
-            while(rs.next()) {
+            while (rs.next()) {
                 Member member = new Member();
                 member.setMemberID(rs.getInt("memberID"));
                 member.setLastName(rs.getString("last_name"));
@@ -127,6 +130,12 @@ public class MemberController {
                 member.setContactInformation(rs.getString("contact_information"));
                 member.setMembershipType(rs.getString("membership_type"));
                 member.setMembershipStatus(rs.getString("membership_status"));
+
+                member.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
+                member.setRegistrationDate(rs.getDate("registration_date").toLocalDate());
+                member.setSignedWaiver(rs.getString("signed_waiver"));
+
+                members.add(member);
             }
 
         } catch (SQLException e) {
@@ -136,14 +145,18 @@ public class MemberController {
         return members;
     }
 
-    public String createNewMember(String firstName, String lastName, String dobText, String contactInfo, String regDateText, String waiver, String type, String status) {
+    public String createNewMember(String firstName, String lastName, String dobText, String contactInfo,
+            String regDateText, String waiver, String type, String status) {
         if (firstName.isBlank() || lastName.isBlank()) {
             return "First name and last name cannot be empty.";
         }
 
         try {
-            LocalDate dob = LocalDate.parse(dobText.trim());
-            LocalDate regDate = LocalDate.parse(regDateText.trim());
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            LocalDate dob = LocalDate.parse(dobText.trim(), formatter);
+            LocalDate regDate = LocalDate.parse(regDateText.trim(), formatter);
 
             Member member = new Member();
             member.setFirstName(firstName.trim());
@@ -161,12 +174,16 @@ public class MemberController {
             else
                 return "Failed to create member.";
 
+        } catch (DateTimeParseException e) {
+            return "Invalid date format. Please use YYYY-MM-DD.";
         } catch (Exception e) {
-            return "Invalid date format. Use YYYY-MM-DD.";
+            e.printStackTrace();
+            return "Unexpected error: " + e.getMessage();
         }
     }
 
-    public String updateExistingMember(Member member, String newFirstName, String newLastName, String dobText, String contactInfo, String regDateText, String waiver, String type, String status) {
+    public String updateExistingMember(Member member, String newFirstName, String newLastName, LocalDate dobText,
+            String contactInfo, LocalDate regDateText, String waiver, String type, String status) {
         if (!newFirstName.equalsIgnoreCase("KEEP")) {
             member.setFirstName(newFirstName.trim());
         }
@@ -175,14 +192,14 @@ public class MemberController {
         }
 
         try {
-            if (!dobText.equalsIgnoreCase("KEEP")) {
-                member.setDateOfBirth(LocalDate.parse(dobText.trim()));
+            if (dobText != null) {
+                member.setDateOfBirth(dobText);
             }
             if (!contactInfo.equalsIgnoreCase("KEEP")) {
                 member.setContactInformation(contactInfo.trim());
             }
-            if (!regDateText.equalsIgnoreCase("KEEP")) {
-                member.setRegistrationDate(LocalDate.parse(regDateText.trim()));
+            if (regDateText != null) {
+                member.setRegistrationDate(regDateText);
             }
             if (!waiver.equalsIgnoreCase("KEEP")) {
                 member.setSignedWaiver(waiver.trim());

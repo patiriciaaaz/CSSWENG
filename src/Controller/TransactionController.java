@@ -5,7 +5,7 @@ import Model.Sale;
 import Model.Transaction;
 import java.sql.*;
 import java.util.List;
-import java.util.Random;
+
 
 import javax.swing.JOptionPane;
 
