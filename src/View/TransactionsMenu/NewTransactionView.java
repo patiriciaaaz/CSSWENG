@@ -254,6 +254,13 @@ public class NewTransactionView extends JDialog {
         });
 
         confirmButton.addActionListener(e -> {
+
+            if (cart.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Cart is empty. Please add items before confirming.",
+                        "Empty Cart", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             Integer memberID = null;
             try {
                 if (!memberIDField.getText().isBlank()) {
