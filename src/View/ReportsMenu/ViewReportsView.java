@@ -43,12 +43,12 @@ public class ViewReportsView extends JFrame {
         menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
         // Buttons
-        JButton salesReportsBtn = new JButton("Sales Reports");
-        JButton membershipReportsBtn = new JButton("Membership Reports");
+        JButton salesReportsBtn = new JButton("Sales");
+        JButton revenueReportsBtn = new JButton("Revenue Reports");
         JButton memberTransactionsBtn = new JButton("Member Transactions");
         JButton backButton = new JButton("Back to Main Menu");
 
-        JButton[] buttons = { salesReportsBtn, membershipReportsBtn, memberTransactionsBtn, backButton };
+        JButton[] buttons = { salesReportsBtn, revenueReportsBtn, memberTransactionsBtn, backButton };
 
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -56,7 +56,7 @@ public class ViewReportsView extends JFrame {
             btn.setBackground(Color.RED);
             btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
-            btn.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
             btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             btn.setOpaque(true);
@@ -93,8 +93,8 @@ public class ViewReportsView extends JFrame {
 
         salesReportsBtn.setIcon(salesReportsIconScaled);
         salesReportsBtn.setIconTextGap(12);
-        membershipReportsBtn.setIcon(memberReportsIconScaled);
-        membershipReportsBtn.setIconTextGap(12);
+        revenueReportsBtn.setIcon(memberReportsIconScaled);
+        revenueReportsBtn.setIconTextGap(12);
         memberTransactionsBtn.setIcon(transactionReportsIconScaled);
         memberTransactionsBtn.setIconTextGap(12);
         backButton.setIcon(backIconScaled);
@@ -113,8 +113,9 @@ public class ViewReportsView extends JFrame {
             dispose();
         });
 
-        membershipReportsBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Membership Report not yet implemented.");
+       revenueReportsBtn.addActionListener(e -> {
+            new RevenueReportView(this, transactionController).setVisible(true);
+            dispose();
         });
 
         memberTransactionsBtn.addActionListener(e -> {
