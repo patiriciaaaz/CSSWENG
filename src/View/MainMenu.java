@@ -54,7 +54,7 @@ public class MainMenu extends JFrame {
         viewReportsButton = new JButton("Reports");
         transactionsButton = new JButton("Transactions");
 
-        JButton[] buttons = { updateDbButton, memberDbButton, viewReportsButton, transactionsButton };
+        JButton[] buttons = { updateDbButton, memberDbButton, transactionsButton, viewReportsButton };
         for (JButton btn : buttons) {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
             btn.setMaximumSize(new Dimension(250, 60));

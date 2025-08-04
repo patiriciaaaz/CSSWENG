@@ -4,6 +4,7 @@ import Model.Item;
 import Model.Sale;
 import Model.Transaction;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -193,9 +194,34 @@ public class TransactionController {
         }
     }
 
-
     public MemberController getMemberController() {
         return memberController;
+    }
+
+    public List<Transaction> getTransactionsByMember(int memberID) {
+        List<Transaction> transactions = new ArrayList<>();
+
+        String sql = "SELECT * FROM transactions WHERE memberID = ? ORDER BY transactionID DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, memberID);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Transaction t = new Transaction();
+                t.setTransactionID(rs.getInt("transactionID"));
+                t.setMemberID(rs.getInt("memberID"));
+                t.setTransactionDate(rs.getTimestamp("transaction_date"));
+                t.setAmount(rs.getDouble("amount"));
+                t.setTransactionType(rs.getString("transaction_type"));
+
+                transactions.add(t);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return transactions;
     }
 
 }

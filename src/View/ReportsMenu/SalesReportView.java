@@ -4,7 +4,6 @@ import Controller.SaleController;
 import Controller.ItemController;
 import Model.Sale;
 import Model.Item;
-import app.MyApp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +11,11 @@ import java.util.List;
 
 public class SalesReportView extends JFrame {
     private JPanel saleListPanel;
+    private JFrame parentFrame;
 
-    public SalesReportView(SaleController saleController, ItemController itemController) {
+    public SalesReportView(JFrame parentFrame, SaleController saleController, ItemController itemController) {
+        this.parentFrame = parentFrame;
+
         setTitle("SJ Fitness Gym POS - Sales Report");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,6 +33,7 @@ public class SalesReportView extends JFrame {
         saleListPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         List<Sale> sales = saleController.getAllSales();
+        sales.sort((a, b) -> Integer.compare(b.getSalesID(), a.getSalesID()));
         for (Sale s : sales) {
             JPanel card = new JPanel();
             card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -118,13 +121,17 @@ public class SalesReportView extends JFrame {
             }
         });
 
-        ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
-        Image backImg = backIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
-        backButton.setIcon(new ImageIcon(backImg));
-        backButton.setIconTextGap(12);
+        try {
+            ImageIcon backIcon = new ImageIcon(getClass().getResource("../icons/return.png"));
+            Image backImg = backIcon.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
+            backButton.setIcon(new ImageIcon(backImg));
+            backButton.setIconTextGap(12);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         backButton.addActionListener(e -> {
-            MyApp.showMainMenu();
+            parentFrame.setVisible(true);
             dispose();
         });
 
