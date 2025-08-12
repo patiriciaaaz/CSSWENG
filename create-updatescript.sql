@@ -73,6 +73,12 @@ CREATE TABLE `membership_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+-- Insert default membership types
+INSERT INTO `membership_types` (`membership_type`, `price`) VALUES
+('NORMAL', 0),
+('PWD', 0),
+('SENIOR', 0);
+
 --
 -- Table structure for table `sales`
 --
